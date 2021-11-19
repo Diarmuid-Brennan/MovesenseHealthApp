@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MovesenseHealthTrackerApp</string>
+    <string name="scanButton">Scan</string>
+    <string name="scanStopButton">Stop Scan</string>
+    <string name="accButton">Acc</string>
+    <string name="scan">Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="balanceEx1_button">Balance Exercise One</string>
+
+    <string name="acc_button">ACC</string>
+    <string name="gyro_button">GYRO</string>
+    <string name="magn_button">MAGN</string>
+    <string name="ecg_button">ECG</string>
+
+    <string name="accTextview" />
+    <string name="ecgTextview" />
+    <string name="magnTextview" />
+    <string name="gyroTextview" />
+
+    <string name="x">x : </string>
+    <string name="y">y : </string>
+    <string name="z">z : </string>
+    <string name="balanceEx1desc">Stand on one leg for 30 seconds</string>
+    <string name="setInitialScore">Set Initial Score</string>
+    <string name="performExercise">Perform Exercise</string>
+    <string name="viewProgressButton">View  Progress</string>
+    <string name="balanceExListButton">View Exercise List</string>
+    <string name="connectToTextView">Select device to connect to:</string>
+    <string name="exitButton">Exit</string>
+</resources>

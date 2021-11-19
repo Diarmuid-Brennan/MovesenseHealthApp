@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "465250985483",
+    "project_id": "movesense-balance-app",
+    "storage_bucket": "movesense-balance-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465250985483:android:7d2bd657725190a624090e",
+        "android_client_info": {
+          "package_name": "com.example.movesensehealthtrackerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "465250985483-j28ud0ri17v95gkfpmj3880phtuoeivk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCybxWBeZGlm_4CiJUQMRJA2EnUlc5aOX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "465250985483-j28ud0ri17v95gkfpmj3880phtuoeivk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.BalanceExerciseListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/balanceEx1Button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            android:layout_weight="1.0"
+            android:text="@string/balanceEx1_button" />
+
+        <Button
+            android:id="@+id/gyroButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            android:layout_weight="1.0"
+            android:enabled="false"
+            android:text="@string/gyro_button" />
+
+        <Button
+            android:id="@+id/magnButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            android:layout_weight="1.0"
+            android:enabled="false"
+            android:text="@string/magn_button" />
+
+        <Button
+            android:id="@+id/ecgButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="100dp"
+            android:layout_weight="1.0"
+            android:enabled="false"
+            android:text="@string/ecg_button" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
