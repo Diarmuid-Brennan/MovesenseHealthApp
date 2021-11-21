@@ -20,6 +20,9 @@
     <string name="x">x : </string>
     <string name="y">y : </string>
     <string name="z">z : </string>
+    <string name="HR">HR : </string>
+
+    <string name="test_linear_acceleration">Linear Acceleration</string>
     <string name="balanceEx1desc">Stand on one leg for 30 seconds</string>
     <string name="setInitialScore">Set Initial Score</string>
     <string name="performExercise">Perform Exercise</string>

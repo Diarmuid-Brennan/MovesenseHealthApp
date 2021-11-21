@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Initialize Movesense MDS library
         initMds();
 
-        fd = FirebaseDatabase.getInstance();
-        dbRef = fd.getReference();
         onScanClicked();
     }
 

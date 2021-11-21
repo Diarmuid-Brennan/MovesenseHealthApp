@@ -14,7 +14,8 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
     private static final String LOG_TAG = AccActivity.class.getSimpleName();
     private String connectedSerial;
 
-    Button setInitialScore;
+    private Button setInitialScore;
+    private Button performExercise;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,10 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
         connectedSerial = extras.getString("serial");
 
         setInitialScore = (Button) findViewById(R.id.setInitialScore);
-        setInitialScore.setOnClickListener(this); // calling onClick() method
+        setInitialScore.setOnClickListener(this);
+
+        performExercise = (Button) findViewById(R.id.performExercise);
+        performExercise.setOnClickListener(this);// calling onClick() method
 
 
     }
@@ -38,7 +42,7 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
                 startActivity(accIntent);
                 break;
             case R.id.performExercise:
-                Intent exerciseIntent = new Intent(this, AccActivity.class);
+                Intent exerciseIntent = new Intent(this, BalanceExerciseActivity.class);
                 exerciseIntent.putExtra("serial", connectedSerial);
                 startActivity(exerciseIntent);
                 break;
