@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.view;
+package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,19 +7,20 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.movesensehealthtrackerapp.R;
-import com.example.movesensehealthtrackerapp.model.AngularVelocity;
+import com.example.movesensehealthtrackerapp.model.MagneticField;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
 
-public class GyroActivity extends AppCompatActivity {
+public class MagnActivity extends AppCompatActivity {
 
-    static private String ANGULAR_VELOCITY_PATH_13 = "/Meas/Gyro/13";
+    //    // Sensor subscription
+    private final String MAGNETIC_FIELD_PATH = "/Meas/Magn/13";
     private MdsSubscription mdsSubscription;
     private String subscribedDeviceSerial;
-    private static final String LOG_TAG = AccActivity.class.getSimpleName();
+    private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
 
     private Mds mMds;
@@ -30,14 +31,15 @@ public class GyroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Bundle extras = getIntent().getExtras();
         connectedSerial = extras.getString("serial");
-        setContentView(R.layout.activity_gyro);
+        setContentView(R.layout.activity_magn);
 
-        subscribeToGyroSensor();
+        subscribeToMagnSensor();
     }
 
-        public void subscribeToGyroSensor() {
+        public void subscribeToMagnSensor() {
         // Clean up existing subscription (if there is one)
         if (mdsSubscription != null) {
             unsubscribe();
@@ -46,9 +48,8 @@ public class GyroActivity extends AppCompatActivity {
         // Build JSON doc that describes what resource and device to subscribe
         // Here we subscribe to 13 hertz accelerometer data
         StringBuilder sb = new StringBuilder();
-        String strContract = sb.append("{\"Uri\": \"").append(connectedSerial).append(ANGULAR_VELOCITY_PATH_13).append("\"}").toString();
+        String strContract = sb.append("{\"Uri\": \"").append(connectedSerial).append(MAGNETIC_FIELD_PATH).append("\"}").toString();
         Log.d(LOG_TAG, strContract);
-        //final View sensorUI = findViewById(R.id.ma);
 
         subscribedDeviceSerial = connectedSerial;
 
@@ -58,17 +59,14 @@ public class GyroActivity extends AppCompatActivity {
                     public void onNotification(String data) {
                         Log.d(LOG_TAG, "onNotification(): " + data);
 
-//                        // If UI not enabled, do it now
-//                        if (sensorUI.getVisibility() == View.GONE)
-//                            sensorUI.setVisibility(View.VISIBLE);
 
-                        AngularVelocity gyroResponse = new Gson().fromJson(data, AngularVelocity.class);
-                        if (gyroResponse != null && gyroResponse.body.array.length > 0) {
+                        MagneticField magnResponse = new Gson().fromJson(data, MagneticField.class);
+                        if (magnResponse != null && magnResponse.body.array.length > 0) {
 
-                            String gyroStr =
-                                    String.format("%.02f, %.02f, %.02f", gyroResponse.body.array[0].x, gyroResponse.body.array[0].y, gyroResponse.body.array[0].z);
+                            String accStr =
+                                    String.format("%.02f, %.02f, %.02f", magnResponse.body.array[0].x, magnResponse.body.array[0].y, magnResponse.body.array[0].z);
 
-                            ((TextView)findViewById(R.id.gyroTextView)).setText(gyroStr);
+                            ((TextView)findViewById(R.id.magnTextView)).setText(accStr);
                         }
                     }
 

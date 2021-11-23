@@ -20,12 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.model.MyScanResult;
-import com.example.movesensehealthtrackerapp.view.AccActivity;
-import com.example.movesensehealthtrackerapp.view.BalanceExOneActivity;
-import com.example.movesensehealthtrackerapp.view.BalanceExerciseListActivity;
-import com.example.movesensehealthtrackerapp.view.EcgActivity;
-import com.example.movesensehealthtrackerapp.view.GyroActivity;
-import com.example.movesensehealthtrackerapp.view.MagnActivity;
+import com.example.movesensehealthtrackerapp.activity.BalanceExerciseListActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.movesense.mds.Mds;

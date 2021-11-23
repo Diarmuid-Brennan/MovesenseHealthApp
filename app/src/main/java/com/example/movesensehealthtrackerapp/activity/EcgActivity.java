@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.view;
+package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.model.EcgModel;
-import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsException;
@@ -25,7 +24,7 @@ public class EcgActivity extends AppCompatActivity {
     private MdsSubscription mdsSubscriptionHr;
     private MdsSubscription mdsSubscriptionEcg;
     private String subscribedDeviceSerial;
-    private static final String LOG_TAG = AccActivity.class.getSimpleName();
+    private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
 
     private Mds mMds;

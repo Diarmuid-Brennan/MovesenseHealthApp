@@ -1,30 +1,28 @@
 package com.example.movesensehealthtrackerapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.model.AccData;
 import com.example.movesensehealthtrackerapp.model.HeartRate;
 import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
-import com.example.movesensehealthtrackerapp.view.AccActivity;
+import com.example.movesensehealthtrackerapp.activity.InitialBalanceActivity;
+import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Timestamp;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
@@ -33,11 +31,8 @@ import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -47,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private MdsSubscription mdsSubscription;
     private MdsSubscription mdsSubscriptionHR;
 
-    private static final String LOG_TAG = AccActivity.class.getSimpleName();
+    private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
 
     private Mds mMds;
@@ -65,11 +60,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected List<Integer> rrDataList = new ArrayList<>();
     protected List<Float> bpmDataList = new ArrayList<>();
 
-    private Button exitButton;
+    protected FirebaseDBConnection firebaseDBConnection;
 
-    //Database
-    protected FirebaseFirestore fd;
-    protected DatabaseReference dbRef;
+    private Button exitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.invalidate();
 
-        fd = FirebaseFirestore.getInstance();
-
+        firebaseDBConnection = new FirebaseDBConnection();
 
         subscribeToAccSensor();
         subscribeToHrSensor();
@@ -256,23 +248,5 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         //startActivity(balanceExListIntent);
     }
 
-//    private void exitButtonClicked(View view){
-//        unsubscribe();
-//        addScoreToDatabase();
-//        //Intent balanceExListIntent = new Intent(this, BalanceExOneActivity.class);
-//        //startActivity(balanceExListIntent);
-//    }
-
-    private float calculateMaxValue(){
-        return 0;
-    }
-
-    private void addScoreToDatabase(){
-        addBalanceScoreToDB();
-        addHeartRateScoreToDB();
-    }
-
-    protected abstract void addHeartRateScoreToDB();
-
-    protected abstract void addBalanceScoreToDB();
+    protected abstract void addScoreToDatabase();
 }

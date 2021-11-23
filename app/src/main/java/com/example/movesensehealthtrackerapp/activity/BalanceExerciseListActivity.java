@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.view;
+package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 

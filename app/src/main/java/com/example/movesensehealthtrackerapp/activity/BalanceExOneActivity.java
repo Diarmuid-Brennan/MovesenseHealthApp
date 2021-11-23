@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.view;
+package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,7 +11,7 @@ import com.example.movesensehealthtrackerapp.R;
 
 public class BalanceExOneActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String LOG_TAG = AccActivity.class.getSimpleName();
+    private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
 
     private Button setInitialScore;
@@ -37,7 +37,7 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.setInitialScore:
-                Intent accIntent = new Intent(this, AccActivity.class);
+                Intent accIntent = new Intent(this, InitialBalanceActivity.class);
                 accIntent.putExtra("serial", connectedSerial);
                 startActivity(accIntent);
                 break;

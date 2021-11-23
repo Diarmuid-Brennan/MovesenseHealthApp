@@ -30,31 +30,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovesenseHealthTrackerApp">
         <activity
-            android:name=".view.BalanceExerciseActivity"
+            android:name=".activity.BalanceExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".BaseActivity"
             android:exported="false" />
         <activity
-            android:name=".view.performExerciseActivity"
+            android:name=".activity.BalanceExerciseListActivity"
             android:exported="false" />
         <activity
-            android:name=".view.BalanceExerciseListActivity"
+            android:name=".activity.BalanceExOneActivity"
             android:exported="false" />
         <activity
-            android:name=".view.BalanceExOneActivity"
+            android:name=".activity.EcgActivity"
             android:exported="false" />
         <activity
-            android:name=".view.EcgActivity"
+            android:name=".activity.MagnActivity"
             android:exported="false" />
         <activity
-            android:name=".view.MagnActivity"
+            android:name=".activity.GyroActivity"
             android:exported="false" />
         <activity
-            android:name=".view.GyroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.AccActivity"
+            android:name=".activity.InitialBalanceActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
