@@ -30,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovesenseHealthTrackerApp">
         <activity
+            android:name=".activity.ProgressReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.BalanceExerciseActivity"
             android:exported="false" />
         <activity

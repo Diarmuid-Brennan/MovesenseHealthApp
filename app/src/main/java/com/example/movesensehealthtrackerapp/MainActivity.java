@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.movesensehealthtrackerapp.activity.ProgressReportActivity;
 import com.example.movesensehealthtrackerapp.model.MyScanResult;
 import com.example.movesensehealthtrackerapp.activity.BalanceExerciseListActivity;
 import com.google.firebase.database.DatabaseReference;
@@ -321,9 +322,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void balanceExListClicked(View view){
-        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
-        balanceExListIntent.putExtra("serial", device.connectedSerial);
-        startActivity(balanceExListIntent);//refresh is onClick name given to the button
+        Intent progressIntent = new Intent(this, ProgressReportActivity.class);
+        startActivity(progressIntent);
+
+//        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
+//        balanceExListIntent.putExtra("serial", device.connectedSerial);
+//        startActivity(balanceExListIntent);//refresh is onClick name given to the button
 
     }
 

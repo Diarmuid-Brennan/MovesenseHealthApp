@@ -16,6 +16,7 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
 
     private Button setInitialScore;
     private Button performExercise;
+    private Button viewProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,10 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
         setInitialScore.setOnClickListener(this);
 
         performExercise = (Button) findViewById(R.id.performExercise);
-        performExercise.setOnClickListener(this);// calling onClick() method
+        performExercise.setOnClickListener(this);
 
-
+        viewProgress = (Button) findViewById(R.id.viewProgressButton);
+        viewProgress.setOnClickListener(this);
     }
 
     @Override
@@ -45,6 +47,10 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
                 Intent exerciseIntent = new Intent(this, BalanceExerciseActivity.class);
                 exerciseIntent.putExtra("serial", connectedSerial);
                 startActivity(exerciseIntent);
+                break;
+            case R.id.viewProgressButton:
+                Intent progressIntent = new Intent(this, ProgressReportActivity.class);
+                startActivity(progressIntent);
                 break;
             default:
                 break;

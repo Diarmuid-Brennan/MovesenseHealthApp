@@ -60,7 +60,6 @@
                 android:layout_width="296dp"
                 android:layout_height="wrap_content"
                 android:onClick="balanceExListClicked"
-                android:enabled="false"
                 android:text="@string/balanceExListButton" />
 
         </LinearLayout>
