@@ -74,6 +74,33 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/heartRateTextview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/HR"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/beatIntervalTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/BeatInterval"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,12 +109,6 @@
         android:orientation="vertical"
         >
 
-        <TextView
-            android:id="@+id/heartRateTextview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/HR"
-            android:textSize="16sp" />
 
         <Button
             android:id="@+id/exitButton"

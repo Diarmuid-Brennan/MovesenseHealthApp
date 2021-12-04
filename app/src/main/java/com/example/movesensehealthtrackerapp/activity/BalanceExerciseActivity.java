@@ -10,6 +10,7 @@ public class BalanceExerciseActivity extends BaseActivity {
 
     public static Context context;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -19,8 +20,8 @@ public class BalanceExerciseActivity extends BaseActivity {
 
     @Override
     protected void addScoreToDatabase() {
-        firebaseDBConnection.addBalanceScoreToDB(accDataList, context);
-        firebaseDBConnection.addHeartRateScoreToDB(rrDataList, bpmDataList, context);
+        firebaseDBConnection.addBalanceScoreToDB(accMovementList, context);
+        firebaseDBConnection.addHeartRateScoreToDB(ecgSampleDataList, context);
     }
 
 }

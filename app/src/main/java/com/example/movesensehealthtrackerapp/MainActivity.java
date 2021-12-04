@@ -50,26 +50,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     static private RxBleClient mBleClient;
 
-    //    // Sensor subscription
-    static private String URI_MEAS_ACC_13 = "/Meas/Acc/13";
-    static private String ANGULAR_VELOCITY_PATH_13 = "/Meas/Gyro/13";
-    static private String HEART_RATE_PATH = "/Meas/hr";
-    static private String IMU9_PATH = "/Meas/IMU9/13";
-    private final String MAGNETIC_FIELD_PATH = "/Meas/Magn/13";
-    private final String TEMPERATURE_PATH_SUBSCRIBE = "/Meas/Temp";
-    private MdsSubscription mdsSubscription;
-    private String subscribedDeviceSerial;
-
-
     // UI
     private ListView mScanResultListView;
     private ArrayList<MyScanResult> mScanResArrayList = new ArrayList<>();
-    ArrayAdapter<MyScanResult> mScanResArrayAdapter;//array adapter converts myscanresult list to the listview item
-    Button exerciseListButton;
+    private ArrayAdapter<MyScanResult> mScanResArrayAdapter;//array adapter converts myscanresult list to the listview item
+    private Button exerciseListButton;
 
-    //Database
-    FirebaseDatabase fd;
-    DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,12 +308,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void balanceExListClicked(View view){
-        Intent progressIntent = new Intent(this, ProgressReportActivity.class);
-        startActivity(progressIntent);
-
-//        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
-//        balanceExListIntent.putExtra("serial", device.connectedSerial);
-//        startActivity(balanceExListIntent);//refresh is onClick name given to the button
+        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
+        balanceExListIntent.putExtra("serial", device.connectedSerial);
+        startActivity(balanceExListIntent);//refresh is onClick name given to the button
 
     }
 

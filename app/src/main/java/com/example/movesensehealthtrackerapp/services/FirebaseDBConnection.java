@@ -15,30 +15,27 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FirebaseDBConnection {
-    //Database
+
     private  FirebaseFirestore fd;
-    private DatabaseReference dbRef;
-
-
     public FirebaseDBConnection() {
         fd = FirebaseFirestore.getInstance();
     }
 
-    public void addHeartRateScoreToDB(List<Integer> rrDataList, List<Float> bpmDataList, Context context) {
+    public void addHeartRateScoreToDB(List<Integer> ecgSampleDataList, Context context) {
         Map<String, Object> initialHeartRateScore = new HashMap<>();
 
-        initialHeartRateScore.put("Max_Value", 0);
-        initialHeartRateScore.put("Min_Value", 0);
-        initialHeartRateScore.put("Avg_Value", 0);
+        initialHeartRateScore.put("Max_Value", Collections.max(ecgSampleDataList));
+        initialHeartRateScore.put("Min_Value", Collections.min(ecgSampleDataList));
+        initialHeartRateScore.put("Avg_Value", calcAverage1(ecgSampleDataList));
         initialHeartRateScore.put("Date_set", new Timestamp(new Date()));
-        initialHeartRateScore.put("rrData", rrDataList);
-        initialHeartRateScore.put("bpmData", bpmDataList);
+        initialHeartRateScore.put("ecgData", ecgSampleDataList);
 
         // Add a new document with a generated ID
         fd.collection("balanceEx1_hr_score")
@@ -59,14 +56,14 @@ public class FirebaseDBConnection {
                 });
     }
 
-    public void addBalanceScoreToDB(List<AccData> accDataList, Context context) {
+    public void addBalanceScoreToDB(List<Double> accMovementList, Context context) {
         Map<String, Object> initialBalanceScore = new HashMap<>();
 
-        initialBalanceScore.put("Max_Value", 0);
-        initialBalanceScore.put("Min_Value", 0);
-        initialBalanceScore.put("Avg_Value", 0);
+        initialBalanceScore.put("Max_Value", Collections.max(accMovementList));
+        initialBalanceScore.put("Min_Value", Collections.min(accMovementList));
+        initialBalanceScore.put("Avg_Value", calcAverage(accMovementList));
         initialBalanceScore.put("Date_set", new Timestamp(new Date()));
-        initialBalanceScore.put("accData", accDataList);
+        initialBalanceScore.put("accData", accMovementList);
 
         // Add a new document with a generated ID
         fd.collection("balanceEx1_balance_score")
@@ -87,15 +84,14 @@ public class FirebaseDBConnection {
                 });
     }
 
-    public void addInitialHeartRateScoreToDB(List<Integer> rrDataList, List<Float> bpmDataList, Context context) {
+    public void addInitialHeartRateScoreToDB(List<Integer> ecgSampleDataList, Context context) {
         Map<String, Object> initialHeartRateScore = new HashMap<>();
 
-        initialHeartRateScore.put("Max_Value", 0);
-        initialHeartRateScore.put("Min_Value", 0);
-        initialHeartRateScore.put("Avg_Value", 0);
+        initialHeartRateScore.put("Max_Value", Collections.max(ecgSampleDataList));
+        initialHeartRateScore.put("Min_Value", Collections.min(ecgSampleDataList));
+        initialHeartRateScore.put("Avg_Value", calcAverage1(ecgSampleDataList));
         initialHeartRateScore.put("Date_set", new Timestamp(new Date()));
-        initialHeartRateScore.put("rrData", rrDataList);
-        initialHeartRateScore.put("bpmData", bpmDataList);
+        initialHeartRateScore.put("ecgData", ecgSampleDataList);
 
         // Add a new document with a generated ID
         fd.collection("initial_hr_score").document("Heart Rate Data")
@@ -116,14 +112,14 @@ public class FirebaseDBConnection {
                 });
     }
 
-    public void addInitialBalanceScoreToDB(List<AccData> accDataList, Context context) {
+    public void addInitialBalanceScoreToDB(List<Double> accMovementList, Context context) {
         Map<String, Object> initialBalanceScore = new HashMap<>();
 
-        initialBalanceScore.put("Max_Value", 0);
-        initialBalanceScore.put("Min_Value", 0);
-        initialBalanceScore.put("Avg_Value", 0);
+        initialBalanceScore.put("Max_Value", Collections.max(accMovementList));
+        initialBalanceScore.put("Min_Value", Collections.min(accMovementList));
+        initialBalanceScore.put("Avg_Value", calcAverage(accMovementList));
         initialBalanceScore.put("Date_set", new Timestamp(new Date()));
-        initialBalanceScore.put("accData", accDataList);
+        initialBalanceScore.put("accData", accMovementList);
 
         // Add a new document with a generated ID
         fd.collection("initial_balance_score").document("Balance Data")
@@ -143,6 +139,33 @@ public class FirebaseDBConnection {
                     }
                 });
     }
+
+    private double calcAverage(List<Double> accMovementList)
+    {
+        double sum = 0;
+        for (double i : accMovementList) {
+            sum+=i;
+        }
+        return sum/(double) accMovementList.size();
+    }
+
+    private double calcAverage1(List<Integer> accMovementList)
+    {
+        double sum = 0;
+        for (int i : accMovementList) {
+            sum+=i;
+        }
+        return sum/(double) accMovementList.size();
+    }
+
+//    public static double calculateAverage(List<T> accMovementList)
+//    {
+//        T sum = 0;
+//        for (T i : accMovementList) {
+//            sum+=i;
+//        }
+//        return sum/(double) accMovementList.size();
+//    }
 
     public List<Float> getBalanceProgress(){
         List<Float> result = new ArrayList<>();

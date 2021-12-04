@@ -27,8 +27,8 @@ public class InitialBalanceActivity extends BaseActivity {
 
     @Override
     protected void addScoreToDatabase() {
-        firebaseDBConnection.addInitialBalanceScoreToDB(accDataList, context);
-        firebaseDBConnection.addInitialHeartRateScoreToDB(rrDataList, bpmDataList, context);
+        firebaseDBConnection.addInitialBalanceScoreToDB(accMovementList, context);
+        firebaseDBConnection.addInitialHeartRateScoreToDB(ecgSampleDataList, context);
     }
 
 }

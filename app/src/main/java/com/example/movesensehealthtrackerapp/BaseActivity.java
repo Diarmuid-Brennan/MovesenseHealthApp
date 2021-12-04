@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.movesensehealthtrackerapp.model.AccData;
+import com.example.movesensehealthtrackerapp.model.EcgModel;
 import com.example.movesensehealthtrackerapp.model.HeartRate;
 import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
 import com.example.movesensehealthtrackerapp.activity.InitialBalanceActivity;
@@ -30,7 +31,9 @@ import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,8 +42,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     //    // Sensor subscription
     static private String URI_MEAS_ACC_13 = "/Meas/Acc/13";
     static private String HEART_RATE_PATH = "/Meas/hr";
+    private final String ECG_VELOCITY_PATH = "/Meas/ECG/128";
     private MdsSubscription mdsSubscription;
     private MdsSubscription mdsSubscriptionHR;
+    private MdsSubscription mdsSubscriptionEcg;
+
+    private final int MS_IN_SECOND = 1000;
 
     private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
@@ -55,10 +62,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private TextView xAxisTextView;
     private TextView yAxisTextView;
     private TextView zAxisTextView;
+
     private TextView heartRateTextView;
+    private TextView beatIntervalTextview;
+
     protected List<AccData> accDataList = new ArrayList<>();
     protected List<Integer> rrDataList = new ArrayList<>();
     protected List<Float> bpmDataList = new ArrayList<>();
+    protected List<Integer> ecgSampleDataList = new ArrayList<>();
+    protected List<Double> accMovementList = new ArrayList<>();
+
+
+    private double previousValue[] = {0, 0, 0};
 
     protected FirebaseDBConnection firebaseDBConnection;
 
@@ -76,6 +91,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         yAxisTextView = (TextView) findViewById(R.id.y_axis_textView);
         zAxisTextView = (TextView) findViewById(R.id.z_axis_textView);
         heartRateTextView = (TextView) findViewById(R.id.heartRateTextview);
+        beatIntervalTextview = (TextView) findViewById(R.id.beatIntervalTextView);
 
         xAxisTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
         yAxisTextView.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
@@ -94,68 +110,21 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
         firebaseDBConnection = new FirebaseDBConnection();
 
-        subscribeToAccSensor();
-        subscribeToHrSensor();
+        subscribeToSensors();
     }
 
-    public void subscribeToHrSensor() {
-        // Clean up existing subscription (if there is one)
-        if (mdsSubscriptionHR != null) {
-            unsubscribe();
-        }
-
-        // Build JSON doc that describes what resource and device to subscribe
-        // Here we subscribe to 13 hertz accelerometer data
-        StringBuilder sb = new StringBuilder();
-        String strContract = sb.append("{\"Uri\": \"").append(connectedSerial).append(HEART_RATE_PATH).append("\"}").toString();
-        Log.d(LOG_TAG, strContract);
-
-        mdsSubscriptionHR = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
-                strContract, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
-
-                        HeartRate hrResponse = new Gson().fromJson(data, HeartRate.class);
-                        if (hrResponse != null) {
-
-                            heartRateTextView.setText(String.format(Locale.getDefault(),
-                                    "RR [ms]: %d   Beat interval [bpm]: %.2f", hrResponse.body.rrData[0], hrResponse.body.average));
-
-                            rrDataList.add(hrResponse.body.rrData[0]);
-                            bpmDataList.add(hrResponse.body.average);
-                        }
-                    }
-
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
-
-                });
-
-    }
-
-    public void subscribeToAccSensor() {
-        // Clean up existing subscription (if there is one)
-        if (mdsSubscription != null) {
+    public void subscribeToSensors() {
+        if (mdsSubscriptionHR != null || mdsSubscriptionEcg != null || mdsSubscription != null) {
             unsubscribe();
         }
 
         final LineData mLineData = mChart.getData();
 
         ILineDataSet xSet = mLineData.getDataSetByIndex(0);
-        ILineDataSet ySet = mLineData.getDataSetByIndex(1);
-        ILineDataSet zSet = mLineData.getDataSetByIndex(2);
 
         if (xSet == null) {
             xSet = createSet("Data x", getResources().getColor(android.R.color.holo_red_dark));
-            ySet = createSet("Data y", getResources().getColor(android.R.color.holo_green_dark));
-            zSet = createSet("Data z", getResources().getColor(android.R.color.holo_blue_dark));
             mLineData.addDataSet(xSet);
-            mLineData.addDataSet(ySet);
-            mLineData.addDataSet(zSet);
         }
 
         // Build JSON doc that describes what resource and device to subscribe
@@ -163,6 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         StringBuilder sb = new StringBuilder();
         String strContract = sb.append("{\"Uri\": \"").append(connectedSerial).append(URI_MEAS_ACC_13).append("\"}").toString();
         Log.d(LOG_TAG, strContract);
+
 
         mdsSubscription = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
                 strContract, new MdsNotificationListener() {
@@ -182,16 +152,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                             zAxisTextView.setText(String.format(Locale.getDefault(),
                                     "z: %.6f", arrayData.z));
 
-                            AccData newData = new AccData();
-                            newData.setX(arrayData.x);
-                            newData.setY(arrayData.y);
-                            newData.setZ(arrayData.z);
-                            accDataList.add(newData);
+                            double currentValue[] = {arrayData.x, arrayData.y, arrayData.z};
+                            double movement = Math.sqrt((currentValue[0] - previousValue[0]) * (currentValue[0] - previousValue[0])
+                                    + (currentValue[1] - previousValue[1]) * (currentValue[1] - previousValue[1])
+                                    + (currentValue[2] - previousValue[2]) * (currentValue[2] - previousValue[2])
+                            );
+                            previousValue = Arrays.copyOf(currentValue, currentValue.length);
 
-                            mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) arrayData.x), 0);
-                            mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) arrayData.y), 1);
-                            mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) arrayData.z), 2);
-                            mLineData.notifyDataChanged();
+                            mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) movement), 0);
+                            accMovementList.add(movement);
 
                             // let the chart know it's data has changed
                             mChart.notifyDataSetChanged();
@@ -212,7 +181,71 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
                 });
 
+        StringBuilder sb1 = new StringBuilder();
+        String strContract1 = sb1.append("{\"Uri\": \"").append(connectedSerial).append(HEART_RATE_PATH).append("\"}").toString();
+        Log.d(LOG_TAG, strContract);
+
+        mdsSubscriptionHR = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
+                strContract1, new MdsNotificationListener() {
+                    @Override
+                    public void onNotification(String data) {
+                        Log.d(LOG_TAG, "onNotification(): " + data);
+
+                        HeartRate hrResponse = new Gson().fromJson(data, HeartRate.class);
+                        if (hrResponse != null) {
+
+                            heartRateTextView.setText(String.format(Locale.getDefault(),
+                                    "Heart rate: %.0f [bpm]", (60.0 / hrResponse.body.rrData[0]) * 1000));
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(MdsException e) {
+                        Log.e(LOG_TAG, "subscription onError(): ", e);
+                        unsubscribe();
+                    }
+
+                });
+
+        StringBuilder sb2 = new StringBuilder();
+        String strContract2 = sb2.append("{\"Uri\": \"").append(connectedSerial).append(ECG_VELOCITY_PATH).append("\"}").toString();
+        Log.d(LOG_TAG, strContract2);
+
+
+        mdsSubscriptionEcg = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
+                strContract2, new MdsNotificationListener() {
+                    @Override
+                    public void onNotification(String data) {
+                        Log.d(LOG_TAG, "onNotification(): " + data);
+
+                        EcgModel ecgResponse = new Gson().fromJson(data, EcgModel.class);
+
+                        final int[] ecgSamples = ecgResponse.getBody().getData();
+                        final int sampleCount = ecgSamples.length;
+                        final int ecgSampleRate = 128;
+                        final float sampleInterval = (float) MS_IN_SECOND / ecgSampleRate;
+
+                        if (ecgResponse.getBody() != null) {
+
+                            for (int i = 0; i < sampleCount; i++){
+                                if (ecgResponse.mBody.timestamp != null) {
+
+                                    ecgSampleDataList.add(ecgSamples[i]);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(MdsException e) {
+                        Log.e(LOG_TAG, "subscription onError(): ", e);
+                        unsubscribe();
+                    }
+
+                });
     }
+
 
     private void unsubscribe() {
         if (mdsSubscription != null) {
@@ -223,6 +256,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         if (mdsSubscriptionHR != null) {
             mdsSubscriptionHR.unsubscribe();
             mdsSubscriptionHR = null;
+        }
+        if (mdsSubscriptionEcg != null) {
+            mdsSubscriptionEcg.unsubscribe();
+            mdsSubscriptionEcg = null;
         }
     }
 
