@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Initialize Movesense MDS library
         initMds();
 
-        onScanClicked();
+        //onScanClicked();
+        balList();
     }
 
     private void initMds() {
@@ -305,6 +306,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mMds.disconnect(device.macAddress);
 
         return true;
+    }
+
+    private void balList(){
+        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
+        balanceExListIntent.putExtra("serial", "2");
+        startActivity(balanceExListIntent);//refresh is onClick name given to the button
     }
 
     public void balanceExListClicked(View view){

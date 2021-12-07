@@ -3,6 +3,7 @@ package com.example.movesensehealthtrackerapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.movesensehealthtrackerapp.activity.BalanceExOneActivity;
 import com.example.movesensehealthtrackerapp.model.AccData;
 import com.example.movesensehealthtrackerapp.model.EcgModel;
 import com.example.movesensehealthtrackerapp.model.HeartRate;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -47,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private MdsSubscription mdsSubscriptionHR;
     private MdsSubscription mdsSubscriptionEcg;
 
-    private final int MS_IN_SECOND = 1000;
+    //private final int MS_IN_SECOND = 1000;
 
     private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
     private String connectedSerial;
@@ -66,18 +69,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private TextView heartRateTextView;
     private TextView beatIntervalTextview;
 
-    protected List<AccData> accDataList = new ArrayList<>();
-    protected List<Integer> rrDataList = new ArrayList<>();
-    protected List<Float> bpmDataList = new ArrayList<>();
     protected List<Integer> ecgSampleDataList = new ArrayList<>();
     protected List<Double> accMovementList = new ArrayList<>();
 
-
     private double previousValue[] = {0, 0, 0};
-
     protected FirebaseDBConnection firebaseDBConnection;
-
     private Button exitButton;
+    private long timestamp = 0;
+    private long SetExerciseTimeLength;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +109,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mChart.invalidate();
 
         firebaseDBConnection = new FirebaseDBConnection();
-
+        SetExerciseTimeLength = 15000;
         subscribeToSensors();
     }
 
@@ -134,116 +134,127 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         Log.d(LOG_TAG, strContract);
 
 
-        mdsSubscription = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
-                strContract, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
+            mdsSubscription = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
+                    strContract, new MdsNotificationListener() {
+                        @Override
+                        public void onNotification(String data) {
+                            Log.d(LOG_TAG, "onNotification(): " + data);
 
-                        LinearAcceleration accResponse = new Gson().fromJson(data, LinearAcceleration.class);
-                        if (accResponse != null && accResponse.body.array.length > 0) {
+                            LinearAcceleration accResponse = new Gson().fromJson(data, LinearAcceleration.class);
+                            if (accResponse != null && accResponse.body.array.length > 0) {
 
-                            LinearAcceleration.Array arrayData = accResponse.body.array[0];
+                                if(timestamp == 0) {
+                                    timestamp = accResponse.body.timestamp;
+                                }else if(accResponse.body.timestamp > timestamp+SetExerciseTimeLength){
+                                    timestamp = 0;
+                                    unsubscribe();
+                                    addScoreToDatabase();
+                                }
 
-                            xAxisTextView.setText(String.format(Locale.getDefault(),
-                                    "x: %.6f", arrayData.x));
-                            yAxisTextView.setText(String.format(Locale.getDefault(),
-                                    "y: %.6f", arrayData.y));
-                            zAxisTextView.setText(String.format(Locale.getDefault(),
-                                    "z: %.6f", arrayData.z));
+                                LinearAcceleration.Array arrayData = accResponse.body.array[0];
 
-                            double currentValue[] = {arrayData.x, arrayData.y, arrayData.z};
-                            double movement = Math.sqrt((currentValue[0] - previousValue[0]) * (currentValue[0] - previousValue[0])
-                                    + (currentValue[1] - previousValue[1]) * (currentValue[1] - previousValue[1])
-                                    + (currentValue[2] - previousValue[2]) * (currentValue[2] - previousValue[2])
-                            );
-                            previousValue = Arrays.copyOf(currentValue, currentValue.length);
+                                xAxisTextView.setText(String.format(Locale.getDefault(),
+                                        "x: %.6f", arrayData.x));
+                                yAxisTextView.setText(String.format(Locale.getDefault(),
+                                        "y: %.6f", arrayData.y));
+                                zAxisTextView.setText(String.format(Locale.getDefault(),
+                                        "z: %.6f", arrayData.z));
 
-                            mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) movement), 0);
-                            accMovementList.add(movement);
+                                double currentValue[] = {arrayData.x, arrayData.y, arrayData.z};
+                                double movement = Math.sqrt((currentValue[0] - previousValue[0]) * (currentValue[0] - previousValue[0])
+                                        + (currentValue[1] - previousValue[1]) * (currentValue[1] - previousValue[1])
+                                        + (currentValue[2] - previousValue[2]) * (currentValue[2] - previousValue[2])
+                                );
+                                previousValue = Arrays.copyOf(currentValue, currentValue.length);
 
-                            // let the chart know it's data has changed
-                            mChart.notifyDataSetChanged();
+                                mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) movement), 0);
+                                accMovementList.add(movement);
 
-                            // limit the number of visible entries
-                            mChart.setVisibleXRangeMaximum(50);
+                                // let the chart know it's data has changed
+                                mChart.notifyDataSetChanged();
 
-                            // move to the latest entry
-                            mChart.moveViewToX(accResponse.body.timestamp / 100);
+                                // limit the number of visible entries
+                                mChart.setVisibleXRangeMaximum(50);
+
+                                // move to the latest entry
+                                mChart.moveViewToX(accResponse.body.timestamp / 100);
+
+
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
-
-                });
-
-        StringBuilder sb1 = new StringBuilder();
-        String strContract1 = sb1.append("{\"Uri\": \"").append(connectedSerial).append(HEART_RATE_PATH).append("\"}").toString();
-        Log.d(LOG_TAG, strContract);
-
-        mdsSubscriptionHR = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
-                strContract1, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
-
-                        HeartRate hrResponse = new Gson().fromJson(data, HeartRate.class);
-                        if (hrResponse != null) {
-
-                            heartRateTextView.setText(String.format(Locale.getDefault(),
-                                    "Heart rate: %.0f [bpm]", (60.0 / hrResponse.body.rrData[0]) * 1000));
-
+                        @Override
+                        public void onError(MdsException e) {
+                            Log.e(LOG_TAG, "subscription onError(): ", e);
+                            unsubscribe();
                         }
-                    }
 
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
+                    });
 
-                });
+            StringBuilder sb1 = new StringBuilder();
+            String strContract1 = sb1.append("{\"Uri\": \"").append(connectedSerial).append(HEART_RATE_PATH).append("\"}").toString();
+            Log.d(LOG_TAG, strContract);
 
-        StringBuilder sb2 = new StringBuilder();
-        String strContract2 = sb2.append("{\"Uri\": \"").append(connectedSerial).append(ECG_VELOCITY_PATH).append("\"}").toString();
-        Log.d(LOG_TAG, strContract2);
+            mdsSubscriptionHR = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
+                    strContract1, new MdsNotificationListener() {
+                        @Override
+                        public void onNotification(String data) {
+                            Log.d(LOG_TAG, "onNotification(): " + data);
+
+                            HeartRate hrResponse = new Gson().fromJson(data, HeartRate.class);
+                            if (hrResponse != null) {
+
+                                heartRateTextView.setText(String.format(Locale.getDefault(),
+                                        "Heart rate: %.0f [bpm]", (60.0 / hrResponse.body.rrData[0]) * 1000));
+
+                            }
+                        }
+
+                        @Override
+                        public void onError(MdsException e) {
+                            Log.e(LOG_TAG, "subscription onError(): ", e);
+                            unsubscribe();
+                        }
+
+                    });
+
+            StringBuilder sb2 = new StringBuilder();
+            String strContract2 = sb2.append("{\"Uri\": \"").append(connectedSerial).append(ECG_VELOCITY_PATH).append("\"}").toString();
+            Log.d(LOG_TAG, strContract2);
 
 
-        mdsSubscriptionEcg = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
-                strContract2, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
+            mdsSubscriptionEcg = mMds.builder().build(this).subscribe(URI_EVENTLISTENER,
+                    strContract2, new MdsNotificationListener() {
+                        @Override
+                        public void onNotification(String data) {
+                            Log.d(LOG_TAG, "onNotification(): " + data);
 
-                        EcgModel ecgResponse = new Gson().fromJson(data, EcgModel.class);
+                            EcgModel ecgResponse = new Gson().fromJson(data, EcgModel.class);
 
-                        final int[] ecgSamples = ecgResponse.getBody().getData();
-                        final int sampleCount = ecgSamples.length;
-                        final int ecgSampleRate = 128;
-                        final float sampleInterval = (float) MS_IN_SECOND / ecgSampleRate;
+                            final int[] ecgSamples = ecgResponse.getBody().getData();
+                            final int sampleCount = ecgSamples.length;
+                            //final int ecgSampleRate = 128;
+                            //final float sampleInterval = (float) MS_IN_SECOND / ecgSampleRate;
 
-                        if (ecgResponse.getBody() != null) {
+                            if (ecgResponse.getBody() != null) {
 
-                            for (int i = 0; i < sampleCount; i++){
-                                if (ecgResponse.mBody.timestamp != null) {
+                                for (int i = 0; i < sampleCount; i++) {
+                                    if (ecgResponse.mBody.timestamp != null) {
 
-                                    ecgSampleDataList.add(ecgSamples[i]);
+                                        ecgSampleDataList.add(ecgSamples[i]);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
+                        @Override
+                        public void onError(MdsException e) {
+                            Log.e(LOG_TAG, "subscription onError(): ", e);
+                            unsubscribe();
+                        }
 
-                });
+                    });
+
     }
 
 
@@ -279,10 +290,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        unsubscribe();
-        addScoreToDatabase();
-        //Intent balanceExListIntent = new Intent(this, BalanceExOneActivity.class);
-        //startActivity(balanceExListIntent);
+
+        Intent balanceExListIntent = new Intent(this, BalanceExOneActivity.class);
+        balanceExListIntent.putExtra("serial", connectedSerial);
+        startActivity(balanceExListIntent);
     }
 
     protected abstract void addScoreToDatabase();

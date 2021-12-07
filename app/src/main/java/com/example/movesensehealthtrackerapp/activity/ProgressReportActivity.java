@@ -1,12 +1,18 @@
 package com.example.movesensehealthtrackerapp.activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.movesensehealthtrackerapp.R;
+import com.example.movesensehealthtrackerapp.model.BalanceData;
 import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
+import com.example.movesensehealthtrackerapp.services.GetDataFromDB;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -17,16 +23,25 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ProgressReportActivity extends AppCompatActivity {
 
     private LineChart mChart;
     private FirebaseDBConnection firebaseDBConnection;
+    public static Context context;
 
-    String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun"};
+    String[] months = {"Jan", "Feb"};
+    List<BalanceData> balanceProgress;
+    //List<Float> balanceProgress;
+    List<Integer> hrProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +49,69 @@ public class ProgressReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_progress_report);
 
         mChart = (LineChart) findViewById(R.id.progress_lineChart);
+        initialiseChart();
 
+        context = getApplicationContext();
+        firebaseDBConnection = new FirebaseDBConnection();
+        getData();
+
+
+    }
+
+    private void getData(){
+        final TaskCompletionSource<List<BalanceData>> source = new TaskCompletionSource<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                balanceProgress  = firebaseDBConnection.getBalanceProgress(context);
+                source.setResult(balanceProgress);
+            }
+        }).start();
+
+        hrProgress = firebaseDBConnection.getHeartRateProgress();
+
+        Task<List<BalanceData>> task = source.getTask();
+        task.addOnCompleteListener(new OnCompleteListener<List<BalanceData>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<BalanceData>> task) {
+                displayProgress();
+            }
+        });
+
+//        hrProgress = firebaseDBConnection.getHeartRateProgress();
+//        balanceProgress = firebaseDBConnection.getBalanceProgress2();
+//        displayProgress();
+    }
+
+
+
+//    private void getData(){
+//        balanceProgress = firebaseDBConnection.getBalanceProgress(context, resultList -> balanceProgress.add(1F));
+//        hrProgress = firebaseDBConnection.getHeartRateProgress();
+//        //displayProgress();
+//    }
+
+//    public interface IQuery{
+//        void onSuccess(List<Float> resultList);
+//    }
+
+//        private void getData(){
+//            new GetDataFromDB().execute();
+//        }
+
+//    private void CompletableFuture<Void> getData1(){
+//        try {
+//            balanceProgress = firebaseDBConnection.getBalanceProgress(context);
+//            reportSuccess(result);
+//        } catch (Throwable t) {
+//            reportFailure(t);
+//        }
+//        return completedFuture(null);
+//
+//        hrProgress = firebaseDBConnection.getHeartRateProgress();
+//    }
+
+    private void initialiseChart() {
         // Init Empty Chart
         mChart.setData(new LineData());
         mChart.getDescription().setText("Progress Report");
@@ -45,24 +122,19 @@ public class ProgressReportActivity extends AppCompatActivity {
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(true);
-        xAxis.setLabelCount(10, true);
+        xAxis.setLabelCount(2, true);
         xAxis.setGranularity(1.0f);
         xAxis.setDrawLabels(true);
-//        xAxis.setCenterAxisLabels(true);
-//        xAxis.setLabelRotationAngle(-90);
+
         xAxis.setValueFormatter(new IndexAxisValueFormatter(months));
 
+        YAxis yAxisLeft = mChart.getAxisLeft();
+        yAxisLeft.setEnabled(true);
 
-        firebaseDBConnection = new FirebaseDBConnection();
-
-        displayProgress();
+        mChart.getAxisRight().setEnabled(false);
     }
 
-
-    private void displayProgress(){
-        List<Float> balanceProgress = firebaseDBConnection.getBalanceProgress();
-        List<Integer> hrProgress = firebaseDBConnection.getHeartRateProgress();
-        double x = 0;
+    public void displayProgress(){
 
         final LineData mLineData = mChart.getData();
 
@@ -77,16 +149,13 @@ public class ProgressReportActivity extends AppCompatActivity {
 
             for(int currentVal =0; currentVal < balanceProgress.size(); currentVal++)
             {
-                mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal)), 0);
+                mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
+                //mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal)), 0);
                 mLineData.addEntry(new Entry((float)currentVal, (float) hrProgress.get(currentVal)), 1);
                 mLineData.notifyDataChanged();
 
                 // let the chart know it's data has changed
                 mChart.notifyDataSetChanged();
-
-                // limit the number of visible entries
-                mChart.setVisibleXRangeMaximum(50);
-
             }
 
 
@@ -104,31 +173,4 @@ public class ProgressReportActivity extends AppCompatActivity {
 
         return set;
     }
-    //        YAxis left = mChart.getAxisLeft();
-//        left.setDrawLabels(true); // no axis labels
-//        left.setDrawAxisLine(true); // no axis line
-//        left.setDrawGridLines(true); // no grid lines
-//        left.setDrawZeroLine(true); // draw a zero line
-//        left.setLabelCount(7);
-//        mChart.getAxisRight().setEnabled(false);
-//
-//        final List list_x_axis_name = new ArrayList<>();
-//        list_x_axis_name.add("label1");
-//        list_x_axis_name.add("label2");
-//        list_x_axis_name.add("label3");
-//        list_x_axis_name.add("label4");
-//        list_x_axis_name.add("label5");
-//
-//        left.setCenterAxisLabels(true);
-//        left.setValueFormatter(new IndexAxisValueFormatter(){
-//            public String getFormattedValue(float value, AxisBase axis){
-//                if(value >=0){
-//                    if(value <= list_x_axis_name.size() - 1){
-//                        return (String) list_x_axis_name.get((int) value);
-//                    }
-//                    return "";
-//                }
-//                return "";
-//            }
-//        });
 }
