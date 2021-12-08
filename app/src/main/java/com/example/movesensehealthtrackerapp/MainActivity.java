@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Initialize Movesense MDS library
         initMds();
 
-        //onScanClicked();
-        balList();
+        onScanClicked();
+        //balList();
     }
 
     private void initMds() {

@@ -39,8 +39,8 @@ public class ProgressReportActivity extends AppCompatActivity {
     public static Context context;
 
     String[] months = {"Jan", "Feb"};
-    List<BalanceData> balanceProgress;
-    //List<Float> balanceProgress;
+    //List<BalanceData> balanceProgress;
+    List<Float> balanceProgress;
     List<Integer> hrProgress;
 
     @Override
@@ -59,28 +59,28 @@ public class ProgressReportActivity extends AppCompatActivity {
     }
 
     private void getData(){
-        final TaskCompletionSource<List<BalanceData>> source = new TaskCompletionSource<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                balanceProgress  = firebaseDBConnection.getBalanceProgress(context);
-                source.setResult(balanceProgress);
-            }
-        }).start();
+//        final TaskCompletionSource<List<BalanceData>> source = new TaskCompletionSource<>();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                balanceProgress  = firebaseDBConnection.getBalanceProgress(context);
+//                source.setResult(balanceProgress);
+//            }
+//        }).start();
+//
+//        hrProgress = firebaseDBConnection.getHeartRateProgress();
+//
+//        Task<List<BalanceData>> task = source.getTask();
+//        task.addOnCompleteListener(new OnCompleteListener<List<BalanceData>>() {
+//            @Override
+//            public void onComplete(@NonNull Task<List<BalanceData>> task) {
+//                displayProgress();
+//            }
+//        });
 
         hrProgress = firebaseDBConnection.getHeartRateProgress();
-
-        Task<List<BalanceData>> task = source.getTask();
-        task.addOnCompleteListener(new OnCompleteListener<List<BalanceData>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<BalanceData>> task) {
-                displayProgress();
-            }
-        });
-
-//        hrProgress = firebaseDBConnection.getHeartRateProgress();
-//        balanceProgress = firebaseDBConnection.getBalanceProgress2();
-//        displayProgress();
+        balanceProgress = firebaseDBConnection.getBalanceProgress2();
+        displayProgress();
     }
 
 
@@ -149,8 +149,8 @@ public class ProgressReportActivity extends AppCompatActivity {
 
             for(int currentVal =0; currentVal < balanceProgress.size(); currentVal++)
             {
-                mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
-                //mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal)), 0);
+                //mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
+                mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal)), 0);
                 mLineData.addEntry(new Entry((float)currentVal, (float) hrProgress.get(currentVal)), 1);
                 mLineData.notifyDataChanged();
 
