@@ -19,16 +19,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.movesensehealthtrackerapp.activity.ProgressReportActivity;
 import com.example.movesensehealthtrackerapp.model.MyScanResult;
 import com.example.movesensehealthtrackerapp.activity.BalanceExerciseListActivity;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsResponseListener;
-import com.movesense.mds.MdsSubscription;
 import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleDevice;
 import com.polidea.rxandroidble2.scan.ScanSettings;

@@ -3,34 +3,40 @@ package com.example.movesensehealthtrackerapp.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.model.BalanceData;
 import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
-import com.example.movesensehealthtrackerapp.services.GetDataFromDB;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 public class ProgressReportActivity extends AppCompatActivity {
 
@@ -39,79 +45,30 @@ public class ProgressReportActivity extends AppCompatActivity {
     public static Context context;
 
     String[] months = {"Jan", "Feb"};
-    //List<BalanceData> balanceProgress;
-    List<Float> balanceProgress;
+
+    List<BalanceData> balanceProgress = new ArrayList<>();
     List<Integer> hrProgress;
 
+    private FirebaseFirestore fd = FirebaseFirestore.getInstance();
+
+
+    private MutableLiveData<List<BalanceData>> data;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_report);
 
-        mChart = (LineChart) findViewById(R.id.progress_lineChart);
-        initialiseChart();
-
         context = getApplicationContext();
         firebaseDBConnection = new FirebaseDBConnection();
-        getData();
 
-
-    }
-
-    private void getData(){
-//        final TaskCompletionSource<List<BalanceData>> source = new TaskCompletionSource<>();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                balanceProgress  = firebaseDBConnection.getBalanceProgress(context);
-//                source.setResult(balanceProgress);
-//            }
-//        }).start();
-//
-//        hrProgress = firebaseDBConnection.getHeartRateProgress();
-//
-//        Task<List<BalanceData>> task = source.getTask();
-//        task.addOnCompleteListener(new OnCompleteListener<List<BalanceData>>() {
-//            @Override
-//            public void onComplete(@NonNull Task<List<BalanceData>> task) {
-//                displayProgress();
-//            }
-//        });
-
+        mChart = (LineChart) findViewById(R.id.progress_lineChart);
         hrProgress = firebaseDBConnection.getHeartRateProgress();
-        balanceProgress = firebaseDBConnection.getBalanceProgress2();
-        displayProgress();
+        firebaseDBConnection.getBalanceProgress(context, balanceProgress, this);
     }
 
-
-
-//    private void getData(){
-//        balanceProgress = firebaseDBConnection.getBalanceProgress(context, resultList -> balanceProgress.add(1F));
-//        hrProgress = firebaseDBConnection.getHeartRateProgress();
-//        //displayProgress();
-//    }
-
-//    public interface IQuery{
-//        void onSuccess(List<Float> resultList);
-//    }
-
-//        private void getData(){
-//            new GetDataFromDB().execute();
-//        }
-
-//    private void CompletableFuture<Void> getData1(){
-//        try {
-//            balanceProgress = firebaseDBConnection.getBalanceProgress(context);
-//            reportSuccess(result);
-//        } catch (Throwable t) {
-//            reportFailure(t);
-//        }
-//        return completedFuture(null);
-//
-//        hrProgress = firebaseDBConnection.getHeartRateProgress();
-//    }
-
-    private void initialiseChart() {
+    public void initialiseChart() {
         // Init Empty Chart
         mChart.setData(new LineData());
         mChart.getDescription().setText("Progress Report");
@@ -132,6 +89,7 @@ public class ProgressReportActivity extends AppCompatActivity {
         yAxisLeft.setEnabled(true);
 
         mChart.getAxisRight().setEnabled(false);
+        displayProgress();
     }
 
     public void displayProgress(){
@@ -147,18 +105,17 @@ public class ProgressReportActivity extends AppCompatActivity {
             mLineData.addDataSet(balanceSet);
             mLineData.addDataSet(heartRateSet);
 
-            for(int currentVal =0; currentVal < balanceProgress.size(); currentVal++)
-            {
-                //mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
-                mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal)), 0);
-                mLineData.addEntry(new Entry((float)currentVal, (float) hrProgress.get(currentVal)), 1);
-                mLineData.notifyDataChanged();
+            if (balanceProgress != null){
+                for(int currentVal =0; currentVal < balanceProgress.size(); currentVal++)
+                {
+                    mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
+                    mLineData.addEntry(new Entry((float)currentVal, (float) hrProgress.get(currentVal)), 1);
+                    mLineData.notifyDataChanged();
 
-                // let the chart know it's data has changed
-                mChart.notifyDataSetChanged();
+                    // let the chart know it's data has changed
+                    mChart.notifyDataSetChanged();
+                }
             }
-
-
         }
     }
 

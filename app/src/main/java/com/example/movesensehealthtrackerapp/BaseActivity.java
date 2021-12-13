@@ -2,7 +2,6 @@ package com.example.movesensehealthtrackerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.movesensehealthtrackerapp.activity.BalanceExOneActivity;
-import com.example.movesensehealthtrackerapp.model.AccData;
 import com.example.movesensehealthtrackerapp.model.EcgModel;
 import com.example.movesensehealthtrackerapp.model.HeartRate;
 import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
@@ -24,21 +22,16 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
