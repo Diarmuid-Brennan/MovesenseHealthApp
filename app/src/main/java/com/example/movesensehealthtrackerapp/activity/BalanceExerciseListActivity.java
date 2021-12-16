@@ -44,21 +44,21 @@ import com.example.movesensehealthtrackerapp.R;
                     ex1Intent.putExtra("serial", connectedSerial);
                     startActivity(ex1Intent);
                     break;
-                case R.id.gyroButton:
-                    Intent gyroIntent = new Intent(this, GyroActivity.class);
-                    gyroIntent.putExtra("serial", connectedSerial);
-                    startActivity(gyroIntent);
-                    break;
-                case R.id.magnButton:
-                    Intent magnIntent = new Intent(this, MagnActivity.class);
-                    magnIntent.putExtra("serial", connectedSerial);
-                    startActivity(magnIntent);
-                    break;
-                case R.id.ecgButton:
-                    Intent ecgIntent = new Intent(this, EcgActivity.class);
-                    ecgIntent.putExtra("serial", connectedSerial);
-                    startActivity(ecgIntent);
-                    break;
+//                case R.id.gyroButton:
+//                    Intent gyroIntent = new Intent(this, GyroActivity.class);
+//                    gyroIntent.putExtra("serial", connectedSerial);
+//                    startActivity(gyroIntent);
+//                    break;
+//                case R.id.magnButton:
+//                    Intent magnIntent = new Intent(this, MagnActivity.class);
+//                    magnIntent.putExtra("serial", connectedSerial);
+//                    startActivity(magnIntent);
+//                    break;
+//                case R.id.ecgButton:
+//                    Intent ecgIntent = new Intent(this, EcgActivity.class);
+//                    ecgIntent.putExtra("serial", connectedSerial);
+//                    startActivity(ecgIntent);
+//                    break;
                 default:
                     break;
             }

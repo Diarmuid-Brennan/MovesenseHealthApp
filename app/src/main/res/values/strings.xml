@@ -32,4 +32,42 @@
     <string name="balanceExListButton">View Exercise List</string>
     <string name="connectToTextView">Select device to connect to:</string>
     <string name="exitButton">Exit</string>
+
+    <!--login-->
+    <string name="content_desc">image</string>
+    <string name="title_login">LOGIN</string>
+    <string name="email_id">Email ID</string>
+    <string name="password_id">Password</string>
+    <string name="forgot_password_id">Forgot Password?</string>
+    <string name="button_label_login">Login</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="register">Register</string>
+
+    <!--register-->
+    <string name="create_an_account">CREATE AN ACCOUNT</string>
+    <string name="hint_last_name">Last name</string>
+    <string name="hint_first_name">First name</string>
+    <string name="et_hint_confirm_password">Confirm Password</string>
+    <string name="i_agree_to_the_terms_and_condition">I Agree To The <u> Terms &amp; Condition </u></string>
+    <string name="btn_lbl_register">Register</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="login"><u>Login</u></string>
+    <string name="err_msg_enter_first_name">Please enter first name.</string>
+    <string name="err_msg_enter_last_name">Please enter last name.</string>
+    <string name="err_msg_enter_email">Please enter email.</string>
+    <string name="err_msg_enter_password">Password must be at least 6 characters long</string>
+    <string name="err_msg_enter_confirm_password">Please enter confirm password.</string>
+    <string name="err_msg_password_and_confirm_password_mismatch">Password and confirm password does not match.</string>
+    <string name="err_msg_agree_terms_and_condition">Please agree terms and condition.</string>
+    <string name="validation_success">Your details have been successfully registered</string>
+
+    <!--progressBar-->
+    <string name="please_wait">Please Wait</string>
+
+    <!--forgot password-->
+    <string name="title_forgot_password">FORGOT PASSWORD?</string>
+    <string name="forgot_password_title_description">Enter your username and e-mail address we\'ll send you a email to reset your password</string>
+    <string name="btn_lbl_submit">Submit</string>
+
+
 </resources>

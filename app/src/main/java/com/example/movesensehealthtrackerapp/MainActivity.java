@@ -19,8 +19,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.movesensehealthtrackerapp.activity.LoginActivity;
 import com.example.movesensehealthtrackerapp.model.MyScanResult;
 import com.example.movesensehealthtrackerapp.activity.BalanceExerciseListActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
@@ -51,12 +53,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayList<MyScanResult> mScanResArrayList = new ArrayList<>();
     private ArrayAdapter<MyScanResult> mScanResArrayAdapter;//array adapter converts myscanresult list to the listview item
     private Button exerciseListButton;
+    private String userID;
+    private String emailID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getString("user_id");
+        emailID = extras.getString("email_id");
 
         // Init Scan UI
         mScanResultListView = (ListView)findViewById(R.id.listScanResult);
@@ -77,6 +84,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         onScanClicked();
         //balList();
+
+        //when logout button is implemented
+//        btn_logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                FirebaseAuth.getInstance().signOut();
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
     }
 
     private void initMds() {
