@@ -2,6 +2,7 @@ package com.example.movesensehealthtrackerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.graphics.Typeface;
 import android.widget.TextView;
 
 import com.example.movesensehealthtrackerapp.activity.LoginActivity;
+import com.example.movesensehealthtrackerapp.activity.MainActivity;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -22,6 +24,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        BluetoothAdapter bAdapter = BluetoothAdapter.getDefaultAdapter();
+        bAdapter.enable();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             final WindowInsetsController insetsController = getWindow().getInsetsController();

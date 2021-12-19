@@ -6,48 +6,95 @@
     android:layout_height="match_parent"
     tools:context=".activity.BalanceExerciseListActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+    <FrameLayout
+        android:id="@+id/header_image"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/auth_header_image_height"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_desc"
+            android:scaleType="fitXY"
+            android:src="@drawable/windy_preview_droidviews"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_image"
+        app:layout_constraintStart_toStartOf="@id/header_image">>
+
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
             android:id="@+id/balanceEx1Button"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:text="@string/balanceEx1_button" />
+            android:text="@string/balanceEx1_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
-        <Button
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
             android:id="@+id/gyroButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:enabled="false"
-            android:text="@string/gyro_button" />
+            android:text="null"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
-        <Button
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
             android:id="@+id/magnButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:enabled="false"
-            android:text="@string/magn_button" />
+            android:text="null"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
-        <Button
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
             android:id="@+id/ecgButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_marginTop="40dp"
-            android:layout_marginBottom="100dp"
-            android:layout_weight="1.0"
-            android:enabled="false"
-            android:text="@string/ecg_button" />
+            android:layout_marginBottom="60dp"
+            android:text="null"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

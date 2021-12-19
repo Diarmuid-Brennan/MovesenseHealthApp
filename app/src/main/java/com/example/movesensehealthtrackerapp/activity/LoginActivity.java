@@ -1,7 +1,6 @@
 package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -12,10 +11,10 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.example.movesensehealthtrackerapp.MainActivity;
 import com.example.movesensehealthtrackerapp.R;
+import com.example.movesensehealthtrackerapp.model.User;
+import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
 import com.example.movesensehealthtrackerapp.utils.TextViewBold;
 import com.example.movesensehealthtrackerapp.utils.TextViewLight;
@@ -24,7 +23,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -34,6 +32,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private CustomButtonView btn_login;
     private TextViewLight forgot_password;
     private FirebaseAuth mAuth;
+    FirebaseDBConnection firebaseDBConnection;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -54,10 +53,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             );
         }
 
+        mAuth = FirebaseAuth.getInstance();
+        firebaseDBConnection = new FirebaseDBConnection();
+
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
-        mAuth = FirebaseAuth.getInstance();
-
         tv_register = findViewById(R.id.tv_register);
         tv_register.setOnClickListener(this);
         btn_login = findViewById(R.id.btn_login);
@@ -78,20 +78,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            hideProgressDialog();
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "loginUserWithEmail:success");
-                                showErrorSnackBar("You have successfully logged in", false);
-
+                                firebaseDBConnection.getCurrentUserDetails(LoginActivity.this);
                             } else {
+                                hideProgressDialog();
                                 // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Log.w(TAG, "login:failure", task.getException());
                                 showErrorSnackBar(task.getException().getMessage(), true);
                             }
                         }
                     });
         }
+    }
+
+    public void userLoggedIn(User user){
+        hideProgressDialog();
+        Log.i("User Details: ", user.getFirstname() + " " + user.getLastName() + " " + user.getEmail());
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -116,12 +123,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.btn_login:
                 loginInRegisteredUser();
-                Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent1.putExtra("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                intent1.putExtra("email_id", email.getText());
-                startActivity(intent1);
-                finish();
+                break;
             case R.id.tv_register:
                 Intent intent2 = new Intent(getBaseContext(), RegisterActivity.class);
                 startActivity(intent2);

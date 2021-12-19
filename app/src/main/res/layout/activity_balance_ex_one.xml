@@ -6,46 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".activity.BalanceExOneActivity">
 
-    <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <FrameLayout
+        android:id="@+id/header_image"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/auth_header_image_height"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <TextView
-            android:id="@+id/balanceEx1desc"
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="86dp"
-            android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:text="@string/balanceEx1desc" />
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_desc"
+            android:scaleType="fitXY"
+            android:src="@drawable/windy_preview_droidviews"/>
+    </FrameLayout>
 
-        <Button
-            android:id="@+id/setInitialScore"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_image"
+        app:layout_constraintStart_toStartOf="@id/header_image">
+
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
+            android:id="@+id/balance_description"
+            android:layout_marginTop="40dp"
+            android:text="@string/exercise_description"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:text="@string/setInitialScore" />
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
-        <Button
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
             android:id="@+id/performExercise"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_marginTop="40dp"
-            android:layout_weight="1.0"
-            android:text="@string/performExercise" />
-
-        <Button
-            android:id="@+id/viewProgressButton"
+            android:text="@string/performExercise"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
+
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
+            android:id="@+id/viewProgressButton"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="200dp"
-            android:layout_weight="1.0"
-            android:text="@string/viewProgressButton" />
+            android:text="@string/viewProgressButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

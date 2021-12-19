@@ -11,7 +11,7 @@ import com.example.movesensehealthtrackerapp.R;
 
 public class BalanceExOneActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String LOG_TAG = InitialBalanceActivity.class.getSimpleName();
+    private static final String LOG_TAG = BalanceExOneActivity.class.getSimpleName();
     private String connectedSerial;
 
     private Button setInitialScore;
@@ -25,7 +25,7 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
         Bundle extras = getIntent().getExtras();
         connectedSerial = extras.getString("serial");
 
-        setInitialScore = (Button) findViewById(R.id.setInitialScore);
+        setInitialScore = (Button) findViewById(R.id.balance_description);
         setInitialScore.setOnClickListener(this);
 
         performExercise = (Button) findViewById(R.id.performExercise);
@@ -38,9 +38,8 @@ public class BalanceExOneActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.setInitialScore:
-                Intent accIntent = new Intent(this, InitialBalanceActivity.class);
-                accIntent.putExtra("serial", connectedSerial);
+            case R.id.balance_description:
+                Intent accIntent = new Intent(this, ExerciseDescriptionActivity.class);
                 startActivity(accIntent);
                 break;
             case R.id.performExercise:

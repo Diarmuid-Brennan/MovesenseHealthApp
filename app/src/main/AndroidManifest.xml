@@ -31,7 +31,9 @@
         android:theme="@style/Theme.MovesenseHealthTrackerApp">
         <activity
             android:name=".activity.ForgotPasswordActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
             android:name=".activity.BaseActivity"
             android:exported="false" />
@@ -63,21 +65,16 @@
             android:name=".activity.BalanceExerciseActivity"
             android:exported="false" />
         <activity
-            android:name=".BaseActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.BalanceExerciseListActivity"
             android:exported="false" />
         <activity
             android:name=".activity.BalanceExOneActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.InitialBalanceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
     </application>
 
 </manifest>

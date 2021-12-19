@@ -110,7 +110,6 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_background"
         android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
         android:paddingTop="@dimen/btn_padding"
         android:paddingBottom="@dimen/btn_padding"
         android:text="@string/button_label_login"

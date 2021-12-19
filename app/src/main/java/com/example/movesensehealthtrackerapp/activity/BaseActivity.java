@@ -5,10 +5,13 @@ import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.utils.TextViewLight;
@@ -18,6 +21,7 @@ abstract class BaseActivity extends AppCompatActivity {
 
     protected ProgressDialog progressBar;
     protected TextViewLight progress;
+    protected boolean doubleClickToExit = false;
 
 
     protected void showErrorSnackBar(String message, boolean error){
@@ -44,7 +48,24 @@ abstract class BaseActivity extends AppCompatActivity {
         progressBar.show();
     }
 
-    protected void hideProgressDialog(){
+    public void hideProgressDialog(){
         progressBar.dismiss();
+    }
+
+    protected void doubleBackToExit(){
+        if(doubleClickToExit){
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleClickToExit = true;
+        Toast.makeText(this, getString(R.string.click_again_to_exit), Toast.LENGTH_SHORT);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleClickToExit = false;
+            }
+        },2000);
     }
 }

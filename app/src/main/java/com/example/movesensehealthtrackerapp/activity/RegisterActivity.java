@@ -1,7 +1,6 @@
 package com.example.movesensehealthtrackerapp.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -16,8 +15,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.movesensehealthtrackerapp.MainActivity;
 import com.example.movesensehealthtrackerapp.R;
+import com.example.movesensehealthtrackerapp.model.User;
+import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
 import com.example.movesensehealthtrackerapp.utils.TextViewBold;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +42,7 @@ public class RegisterActivity extends BaseActivity {
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
+    private FirebaseDBConnection firebaseDBConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,30 +62,30 @@ public class RegisterActivity extends BaseActivity {
         }
 
         setupBackFunction();
-
-        tv_login = findViewById(R.id.tv_login);
-        tv_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
         firstname = findViewById(R.id.et_first_name);
         lastname = findViewById(R.id.et_last_name);
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
         confirmPassword = findViewById(R.id.et_confirm_password);
         registerButton = findViewById(R.id.btn_register);
-        mAuth = FirebaseAuth.getInstance();
+        tv_login = findViewById(R.id.tv_login);
 
+        mAuth = FirebaseAuth.getInstance();
+        firebaseDBConnection = new FirebaseDBConnection();
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registerUser();
+            }
+        });
+
+        tv_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -107,9 +108,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void registerUser() {
-
         if (validateRegisterDetails()) {
-
             showProgressDialog(getString(R.string.please_wait));
             //showProgressDialog();
 
@@ -120,17 +119,19 @@ public class RegisterActivity extends BaseActivity {
                     .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            hideProgressDialog();
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
 
-                                showErrorSnackBar("You have successfully registered.", false);
-
-                                FirebaseAuth.getInstance().signOut();
-                                finish();
+                                User newUser = new User(
+                                        user.getUid(),
+                                        firstname.getText().toString().trim(),
+                                        lastname.getText().toString().trim(),
+                                        email.getText().toString().trim()
+                                );
+                                firebaseDBConnection.registerUser(RegisterActivity.this, newUser);
                             } else {
+                                hideProgressDialog();
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                 showErrorSnackBar(task.getException().getMessage(), true);
@@ -138,6 +139,11 @@ public class RegisterActivity extends BaseActivity {
                         }
                     });
         }
+    }
+
+    public void userRegistrationSuccess(){
+        hideProgressDialog();
+        Toast.makeText(this, getString(R.string.register_success), Toast.LENGTH_SHORT).show();
     }
 
     private boolean validateRegisterDetails(){
