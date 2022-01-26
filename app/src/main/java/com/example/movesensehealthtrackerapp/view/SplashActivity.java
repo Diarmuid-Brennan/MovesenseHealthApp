@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,11 +10,10 @@ import android.os.Handler;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
-import android.graphics.Typeface;
-import android.widget.TextView;
 
-import com.example.movesensehealthtrackerapp.activity.LoginActivity;
-import com.example.movesensehealthtrackerapp.activity.MainActivity;
+import com.example.movesensehealthtrackerapp.R;
+import com.example.movesensehealthtrackerapp.model.BalanceActivity;
+import com.example.movesensehealthtrackerapp.utils.Constant;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -44,6 +43,9 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+//                Intent intent = new Intent(getBaseContext(), BalanceExerciseActivity.class);
+//                intent.putExtra("serial", "1");
+//                intent.putExtra("time_limit", 15);
                 startActivity(intent);
                 finish();
             }

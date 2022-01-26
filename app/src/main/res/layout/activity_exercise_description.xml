@@ -4,6 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ExerciseDescriptionActivity">
+    tools:context=".view.ExerciseDescriptionActivity">
+
+    <FrameLayout
+        android:id="@+id/header_image"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/auth_header_image_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_desc"
+            android:scaleType="fitXY"
+            android:src="@drawable/windy_preview_droidviews"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="60px"
+        android:typeface="serif"
+        android:textStyle="italic"
+        android:lines="20"
+        android:maxLines="20"
+        android:layout_marginTop="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_image"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,9 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,7 +15,6 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,7 +25,6 @@ import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
-import com.movesense.mds.MdsResponseListener;
 import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleDevice;
 import com.polidea.rxandroidble2.scan.ScanSettings;
@@ -73,6 +69,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         mScanResultListView.setAdapter(mScanResArrayAdapter);
         mScanResultListView.setOnItemClickListener(this);
         exerciseListButton = (CustomButtonView) findViewById(R.id.balanceExListButton);
+
+        requestNeededPermissions();
 
         initMds();
         initializeScan();
@@ -127,6 +125,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
     Disposable mScanSubscription;
     public void initializeScan() {
+
+
         mScanResArrayList.clear();
         mScanResArrayAdapter.notifyDataSetChanged();
 
@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position < 0 || position >= mScanResArrayList.size())
             return;
-        requestNeededPermissions();
+
         device = mScanResArrayList.get(position);
         if (!device.isConnected()) {
             onScanStopClicked(null);

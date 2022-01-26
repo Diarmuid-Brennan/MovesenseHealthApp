@@ -1,8 +1,13 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,19 +35,20 @@ import com.movesense.mds.MdsSubscription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class BalanceExerciseActivity extends BaseActivity implements View.OnClickListener{
     // Sensor subscription
     private MdsSubscription mdsSubscription;
-    private MdsSubscription mdsSubscriptionHR;
-    private MdsSubscription mdsSubscriptionEcg;
 
     public static Context context;
     //private final int MS_IN_SECOND = 1000;
     private static final String LOG_TAG = BalanceExerciseActivity.class.getSimpleName();
     private String connectedSerial;
+    private int time_limit;
+    private String activityName;
     private Mds mMds;
 
     //view
@@ -60,6 +66,7 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
     private Button exitButton;
     private long timestamp = 0;
     private long SetExerciseTimeLength;
+    private ToneGenerator tg;
 
 
     @Override
@@ -67,6 +74,12 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         connectedSerial = extras.getString(Constant.SERIAL);
+
+        //change to int and set to SetExerciseTimeLength
+        activityName = extras.getString(Constant.NAME);
+        time_limit = extras.getInt(Constant.TIME_LIMIT)*1000;
+        SetExerciseTimeLength = time_limit;
+
         setContentView(R.layout.activity_acc);
 
         mChart = (LineChart) findViewById(R.id.linearAcc_lineChart);
@@ -92,12 +105,22 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
         mChart.invalidate();
 
         firebaseDBConnection = new FirebaseDBConnection();
-        SetExerciseTimeLength = 15000;
+        tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         subscribeToSensors();
     }
 
+
     private void subscribeToSensors() {
-        if (mdsSubscriptionHR != null || mdsSubscriptionEcg != null || mdsSubscription != null) {
+        if (mdsSubscription != null) {
             unsubscribe();
         }
         final LineData mLineData = mChart.getData();
@@ -122,6 +145,7 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
                             if(timestamp == 0) {
                                 timestamp = accResponse.body.timestamp;
                             }else if(accResponse.body.timestamp > timestamp+SetExerciseTimeLength){
+                                tg.startTone(ToneGenerator.TONE_PROP_BEEP);
                                 timestamp = 0;
                                 unsubscribe();
                                 addScoreToDatabase();
@@ -158,62 +182,6 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
                     }
 
                 });
-
-        StringBuilder sb1 = new StringBuilder();
-        String strContract1 = sb1.append(Constant.URI).append(connectedSerial).append(Constant.HEART_RATE_PATH).append(Constant.URI_CLOSING_BACKET).toString();
-        Log.d(LOG_TAG, strContract);
-
-        mdsSubscriptionHR = mMds.builder().build(this).subscribe(Constant.URI_EVENTLISTENER,
-                strContract1, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
-                        HeartRate hrResponse = new Gson().fromJson(data, HeartRate.class);
-                        if (hrResponse != null) {
-                            heartRateTextView.setText(String.format(Locale.getDefault(),
-                                    getString(R.string.heart_rate_bpm), (60.0 / hrResponse.body.rrData[0]) * 1000));
-                        }
-                    }
-
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
-                });
-
-        StringBuilder sb2 = new StringBuilder();
-        String strContract2 = sb2.append(Constant.URI).append(connectedSerial).append(Constant.ECG_VELOCITY_PATH).append(Constant.URI_CLOSING_BACKET).toString();
-        Log.d(LOG_TAG, strContract2);
-
-
-        mdsSubscriptionEcg = mMds.builder().build(this).subscribe(Constant.URI_EVENTLISTENER,
-                strContract2, new MdsNotificationListener() {
-                    @Override
-                    public void onNotification(String data) {
-                        Log.d(LOG_TAG, "onNotification(): " + data);
-                        EcgModel ecgResponse = new Gson().fromJson(data, EcgModel.class);
-
-                        final int[] ecgSamples = ecgResponse.getBody().getData();
-                        final int sampleCount = ecgSamples.length;
-                        //final int ecgSampleRate = 128;
-                        //final float sampleInterval = (float) MS_IN_SECOND / ecgSampleRate;
-
-                        if (ecgResponse.getBody() != null) {
-                            for (int i = 0; i < sampleCount; i++) {
-                                if (ecgResponse.mBody.timestamp != null) {
-                                    ecgSampleDataList.add(ecgSamples[i]);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(MdsException e) {
-                        Log.e(LOG_TAG, "subscription onError(): ", e);
-                        unsubscribe();
-                    }
-                });
     }
 
 
@@ -221,15 +189,6 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
         if (mdsSubscription != null) {
             mdsSubscription.unsubscribe();
             mdsSubscription = null;
-
-        }
-        if (mdsSubscriptionHR != null) {
-            mdsSubscriptionHR.unsubscribe();
-            mdsSubscriptionHR = null;
-        }
-        if (mdsSubscriptionEcg != null) {
-            mdsSubscriptionEcg.unsubscribe();
-            mdsSubscriptionEcg = null;
         }
     }
 
@@ -252,8 +211,7 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
 
     private void addScoreToDatabase() {
         showProgressDialog(getString(R.string.please_wait));
-        firebaseDBConnection.addBalanceScoreToDB(accMovementList, context, this);
-        //firebaseDBConnection.addHeartRateScoreToDB(ecgSampleDataList, context);
+        firebaseDBConnection.addBalanceScoreToDB(accMovementList, activityName, context, this);
     }
 
     public void resultsUploadedSuccess(){

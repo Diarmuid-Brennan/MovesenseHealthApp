@@ -1,21 +1,17 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.utils.TextViewLight;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 
 abstract class BaseActivity extends AppCompatActivity {
 
@@ -54,6 +50,7 @@ abstract class BaseActivity extends AppCompatActivity {
 
     protected void doubleBackToExit(){
         if(doubleClickToExit){
+            FirebaseAuth.getInstance().signOut();
             super.onBackPressed();
             return;
         }

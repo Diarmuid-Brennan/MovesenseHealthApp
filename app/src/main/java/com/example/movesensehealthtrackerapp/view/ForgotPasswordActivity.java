@@ -1,7 +1,6 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
@@ -14,9 +13,7 @@ import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class ForgotPasswordActivity extends BaseActivity {
 

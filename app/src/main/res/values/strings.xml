@@ -59,7 +59,7 @@
     <string name="forgot_password_title_description">Enter your username and e-mail address we\'ll send you a email to reset your password</string>
     <string name="btn_lbl_submit">Submit</string>
     <string name="register_success">Registration successful</string>
-    <string name="click_again_to_exit">Plaese click again to exit</string>
+    <string name="click_again_to_exit">Please click again to exit</string>
 
     <string name="location_permission_denied">You have denied location permission needed. You can allow it from mobile settings.</string>
     <string name="connected_to_movesense_device">Connected to Movesense Device</string>
@@ -70,7 +70,9 @@
     <string name="heart_rate_bpm">Heart rate: %.0f [bpm]</string>
     <string name="balnce_results_uploaded_successfully">Balance  results were uploaded successfully to the database.</string>
     <string name="retrieved_progress_results">Successfully retrieved progress data from database</string>
-    <string name="no_data_found">Database has no reslts stored for this exercise</string>
+    <string name="no_data_found">Database has no results stored for this exercise</string>
+    <string name="no_activities_set">No activities have been set</string>
+    <string name="doctors_email_id">Doctors Email address</string>
 
 
 </resources>

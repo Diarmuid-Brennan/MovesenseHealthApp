@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.BalanceExerciseListActivity">
+    tools:context=".view.BalanceExerciseListActivity">
 
     <FrameLayout
         android:id="@+id/header_image"
@@ -22,79 +22,88 @@
             android:src="@drawable/windy_preview_droidviews"/>
     </FrameLayout>
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/listActivityResult"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="0dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintTop_toBottomOf="@id/header_image"
-        app:layout_constraintStart_toStartOf="@id/header_image">>
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
-            android:id="@+id/balanceEx1Button"
-            android:layout_marginTop="40dp"
-            android:text="@string/balanceEx1_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_background"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingTop="@dimen/btn_padding"
-            android:paddingBottom="@dimen/btn_padding"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_textSize"/>
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:orientation="vertical"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="40dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/header_image"-->
+<!--        app:layout_constraintStart_toStartOf="@id/header_image">>-->
 
-        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
-            android:id="@+id/gyroButton"
-            android:layout_marginTop="40dp"
-            android:text="null"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_background"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingTop="@dimen/btn_padding"
-            android:paddingBottom="@dimen/btn_padding"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_textSize"/>
+<!--        <com.example.movesensehealthtrackerapp.utils.CustomButtonView-->
+<!--            android:id="@+id/balanceEx1Button"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:text="@string/balanceEx1_button"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:background="@drawable/button_background"-->
+<!--            android:foreground="?attr/selectableItemBackground"-->
+<!--            android:paddingTop="@dimen/btn_padding"-->
+<!--            android:paddingBottom="@dimen/btn_padding"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="@dimen/btn_textSize"/>-->
 
-        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
-            android:id="@+id/magnButton"
-            android:layout_marginTop="40dp"
-            android:text="null"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_background"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingTop="@dimen/btn_padding"
-            android:paddingBottom="@dimen/btn_padding"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_textSize"/>
+<!--        <com.example.movesensehealthtrackerapp.utils.CustomButtonView-->
+<!--            android:id="@+id/gyroButton"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:text="null"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:background="@drawable/button_background"-->
+<!--            android:foreground="?attr/selectableItemBackground"-->
+<!--            android:paddingTop="@dimen/btn_padding"-->
+<!--            android:paddingBottom="@dimen/btn_padding"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="@dimen/btn_textSize"/>-->
 
-        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
-            android:id="@+id/ecgButton"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="60dp"
-            android:text="null"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_background"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingTop="@dimen/btn_padding"
-            android:paddingBottom="@dimen/btn_padding"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_textSize"/>
+<!--        <com.example.movesensehealthtrackerapp.utils.CustomButtonView-->
+<!--            android:id="@+id/magnButton"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:text="null"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:background="@drawable/button_background"-->
+<!--            android:foreground="?attr/selectableItemBackground"-->
+<!--            android:paddingTop="@dimen/btn_padding"-->
+<!--            android:paddingBottom="@dimen/btn_padding"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="@dimen/btn_textSize"/>-->
 
-    </LinearLayout>
+<!--        <com.example.movesensehealthtrackerapp.utils.CustomButtonView-->
+<!--            android:id="@+id/ecgButton"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:layout_marginBottom="60dp"-->
+<!--            android:text="null"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:background="@drawable/button_background"-->
+<!--            android:foreground="?attr/selectableItemBackground"-->
+<!--            android:paddingTop="@dimen/btn_padding"-->
+<!--            android:paddingBottom="@dimen/btn_padding"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="@dimen/btn_textSize"/>-->
+
+<!--    </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

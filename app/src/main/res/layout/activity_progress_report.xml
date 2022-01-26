@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="6dp"
-    tools:context=".activity.ProgressReportActivity">
+    tools:context=".view.ProgressReportActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout0"

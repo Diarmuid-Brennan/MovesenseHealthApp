@@ -30,25 +30,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovesenseHealthTrackerApp">
         <activity
-            android:name=".activity.ForgotPasswordActivity"
+            android:name=".view.ForgotPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
-            android:name=".activity.BaseActivity"
+            android:name=".view.BaseActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.RegisterActivity"
+            android:name=".view.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".view.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".view.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar">
@@ -59,19 +59,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ProgressReportActivity"
+            android:name=".view.ProgressReportActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.BalanceExerciseActivity"
+            android:name=".view.ActivityDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.BalanceExerciseListActivity"
+            android:name=".view.ExerciseDescriptionActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.BalanceExOneActivity"
+            android:name=".view.BalanceExerciseActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".view.BalanceExerciseListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />

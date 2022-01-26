@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -31,22 +31,26 @@ public class ProgressReportActivity extends BaseActivity {
     private List<BalanceData> balanceProgress = new ArrayList<>();
     private List<Integer> hrProgress;
     private FirebaseFirestore fd = FirebaseFirestore.getInstance();
+    private String activityName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+
+        //change to int and set to SetExerciseTimeLength
+        activityName = extras.getString(Constant.NAME);
         setContentView(R.layout.activity_progress_report);
 
         context = getApplicationContext();
         firebaseDBConnection = new FirebaseDBConnection();
         mChart = (LineChart) findViewById(R.id.progress_lineChart);
-        hrProgress = firebaseDBConnection.getHeartRateProgress();
         retrieveProgressFromDatabase();
     }
 
     private void retrieveProgressFromDatabase(){
         showProgressDialog(getString(R.string.please_wait));
-        firebaseDBConnection.getBalanceProgress(context, balanceProgress, this);
+        firebaseDBConnection.getBalanceProgress(context, balanceProgress, activityName, this);
     }
 
     public void progressRetrievedSuccess(){
@@ -97,19 +101,16 @@ public class ProgressReportActivity extends BaseActivity {
     private void displayProgress(){
         final LineData mLineData = mChart.getData();
         ILineDataSet balanceSet = mLineData.getDataSetByIndex(0);
-        ILineDataSet heartRateSet = mLineData.getDataSetByIndex(1);
 
         if (balanceSet == null) {
             balanceSet = createSet(Constant.BALANCE, getResources().getColor(android.R.color.holo_red_dark));
-            heartRateSet = createSet(Constant.HEART_RATE, getResources().getColor(android.R.color.holo_green_dark));
+
             mLineData.addDataSet(balanceSet);
-            mLineData.addDataSet(heartRateSet);
 
             if (balanceProgress != null){
                 for(int currentVal =0; currentVal < balanceProgress.size(); currentVal++)
                 {
                     mLineData.addEntry(new Entry((float)currentVal, (float) balanceProgress.get(currentVal).getAvg_Value()), 0);
-                    mLineData.addEntry(new Entry((float)currentVal, (float) hrProgress.get(currentVal)), 1);
                     mLineData.notifyDataChanged();
                     mChart.notifyDataSetChanged();
                 }

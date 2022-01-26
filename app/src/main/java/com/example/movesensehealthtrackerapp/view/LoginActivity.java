@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
 

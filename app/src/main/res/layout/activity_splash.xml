@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/windy_preview_droidviews"
-    tools:context=".SplashActivity">
+    tools:context=".view.SplashActivity">
 
 
     <com.example.movesensehealthtrackerapp.utils.TextViewBold

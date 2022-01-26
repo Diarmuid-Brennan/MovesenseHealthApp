@@ -1,4 +1,4 @@
-package com.example.movesensehealthtrackerapp.activity;
+package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
 
@@ -38,7 +38,9 @@ public class RegisterActivity extends BaseActivity {
     private TextInputEditText email;
     private TextInputEditText password;
     private TextInputEditText confirmPassword;
+    private TextInputEditText doctors_email;
     private CustomButtonView registerButton;
+    private FirebaseUser user;
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
@@ -67,6 +69,7 @@ public class RegisterActivity extends BaseActivity {
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
         confirmPassword = findViewById(R.id.et_confirm_password);
+        doctors_email = findViewById(R.id.et_doctors_email);
         registerButton = findViewById(R.id.btn_register);
         tv_login = findViewById(R.id.tv_login);
 
@@ -110,7 +113,6 @@ public class RegisterActivity extends BaseActivity {
     private void registerUser() {
         if (validateRegisterDetails()) {
             showProgressDialog(getString(R.string.please_wait));
-            //showProgressDialog();
 
             String validatedEmail = email.getText().toString().trim();
             String validatedPassword = password.getText().toString().trim();
@@ -121,7 +123,7 @@ public class RegisterActivity extends BaseActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
+                                user = mAuth.getCurrentUser();
 
                                 User newUser = new User(
                                         user.getUid(),
@@ -141,10 +143,7 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    public void userRegistrationSuccess(){
-        hideProgressDialog();
-        Toast.makeText(this, getString(R.string.register_success), Toast.LENGTH_SHORT).show();
-    }
+
 
     private boolean validateRegisterDetails(){
         if(TextUtils.isEmpty(firstname.getText().toString().trim()) || firstname.getText().toString().trim().length() < 3){
@@ -169,6 +168,10 @@ public class RegisterActivity extends BaseActivity {
         }
         if(!password.getText().toString().trim().equals(confirmPassword.getText().toString().trim())){
             showErrorSnackBar(getString(R.string.err_msg_password_and_confirm_password_mismatch), true);
+            return false;
+        }
+        if(TextUtils.isEmpty(doctors_email.getText().toString().trim())){
+            showErrorSnackBar(getString(R.string.err_msg_enter_email), true);
             return false;
         }
         return true;
