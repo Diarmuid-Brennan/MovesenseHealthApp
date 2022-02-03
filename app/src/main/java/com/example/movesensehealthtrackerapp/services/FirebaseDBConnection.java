@@ -237,16 +237,5 @@ public class FirebaseDBConnection{
     }
 
 
-    public List<Integer> getHeartRateProgress(){
-        List<Integer> result = new ArrayList<>();
-        int num =0;
-        for(int i = 0; i< 10; i++)
-        {
-            num +=  5;
-            result.add(num);
-        }
-        return result;
-    }
-
 
 }

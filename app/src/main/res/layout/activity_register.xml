@@ -158,29 +158,6 @@
                     android:textSize="@dimen/textSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_doctors_email"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/doctors_email_id"
-                android:textColorHint="@color/colorSecondaryText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_confirm_password">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_doctors_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:padding="@dimen/padding"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="@dimen/textSize" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.example.movesensehealthtrackerapp.utils.CustomButtonView
                 android:id="@+id/btn_register"
@@ -200,7 +177,7 @@
                 android:textSize="@dimen/btn_textSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_doctors_email" />
+                app:layout_constraintTop_toBottomOf="@id/til_confirm_password" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

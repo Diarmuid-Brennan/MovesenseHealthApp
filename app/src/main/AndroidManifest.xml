@@ -63,16 +63,19 @@
             android:exported="false" />
         <activity
             android:name=".view.ActivityDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
         <activity
             android:name=".view.ExerciseDescriptionActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
         <activity
             android:name=".view.BalanceExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".view.BalanceExerciseListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
         <activity
             android:name=".view.MainActivity"
             android:exported="true"

@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/content_desc"
             android:scaleType="fitXY"
-            android:src="@drawable/windy_preview_droidviews"/>
+            android:src="@drawable/logo"/>
     </FrameLayout>
 
         <ListView

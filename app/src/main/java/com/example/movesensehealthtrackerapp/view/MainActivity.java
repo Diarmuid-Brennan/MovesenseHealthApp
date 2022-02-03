@@ -15,6 +15,7 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 
 import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener  {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     static MyScanResult device = null;
     // MDS
@@ -68,8 +69,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 android.R.layout.simple_list_item_1, mScanResArrayList);
         mScanResultListView.setAdapter(mScanResArrayAdapter);
         mScanResultListView.setOnItemClickListener(this);
-        exerciseListButton = (CustomButtonView) findViewById(R.id.balanceExListButton);
 
+        exerciseListButton = findViewById(R.id.balanceExListButton);
+        exerciseListButton.setOnClickListener(this);
+        exerciseListButton.setEnabled(false);
         requestNeededPermissions();
 
         initMds();
@@ -195,6 +198,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 }
                 onConnectionSuccessDisplayMessage();
                 exerciseListButton.setEnabled(true);
+
                 mScanResArrayAdapter.notifyDataSetChanged();
             }
 
@@ -234,8 +238,20 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     public void balanceExListClicked(View view){
-        Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
-        balanceExListIntent.putExtra(Constant.SERIAL, device.connectedSerial);
-        startActivity(balanceExListIntent);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.balanceExListButton:
+                Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
+                balanceExListIntent.putExtra(Constant.SERIAL, device.connectedSerial);
+                startActivity(balanceExListIntent);
+                break;
+            default:
+                break;
+        }
+
     }
 }

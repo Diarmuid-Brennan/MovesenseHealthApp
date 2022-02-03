@@ -42,7 +42,8 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                //Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
 //                Intent intent = new Intent(getBaseContext(), BalanceExerciseActivity.class);
 //                intent.putExtra("serial", "1");
 //                intent.putExtra("time_limit", 15);
