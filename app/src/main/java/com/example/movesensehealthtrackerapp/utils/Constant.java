@@ -30,4 +30,5 @@ public class Constant {
     public static final String TIME_LIMIT = "time_limit";
     public static final String DESCRIPTION = "description";
     public static final String PARSED = "parsed";
+    public static final String PATIENT_SCORES= "patient_scores";
 }

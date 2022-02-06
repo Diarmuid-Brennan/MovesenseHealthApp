@@ -36,10 +36,6 @@ public class ProgressReportActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
-
-        //change to int and set to SetExerciseTimeLength
-        activityName = extras.getString(Constant.NAME);
         setContentView(R.layout.activity_progress_report);
 
         context = getApplicationContext();

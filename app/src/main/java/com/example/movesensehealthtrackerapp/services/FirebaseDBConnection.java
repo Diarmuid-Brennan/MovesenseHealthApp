@@ -9,14 +9,17 @@ import androidx.annotation.NonNull;
 import com.example.movesensehealthtrackerapp.model.BalanceActivity;
 import com.example.movesensehealthtrackerapp.view.BalanceExerciseActivity;
 import com.example.movesensehealthtrackerapp.view.BalanceExerciseListActivity;
+import com.example.movesensehealthtrackerapp.view.BeginActivitiesActivity;
 import com.example.movesensehealthtrackerapp.view.LoginActivity;
 import com.example.movesensehealthtrackerapp.view.ProgressReportActivity;
 import com.example.movesensehealthtrackerapp.view.RegisterActivity;
 import com.example.movesensehealthtrackerapp.model.BalanceData;
 import com.example.movesensehealthtrackerapp.model.User;
 import com.example.movesensehealthtrackerapp.utils.Constant;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,13 +27,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class FirebaseDBConnection{
@@ -78,11 +84,9 @@ public class FirebaseDBConnection{
         return currentUserEmail;
     }
 
-    public void getBalanceActivities(BalanceExerciseListActivity activity){
+    public void getBalanceActivities(BeginActivitiesActivity activity){
         List<BalanceActivity> activities = new ArrayList<>();
-        firestore.collection(Constant.PATIENT_ACTIVITIES)
-                .document(getCurrentUserEmail())
-                .collection(Constant.ACTIVITIES)
+        firestore.collection(Constant.ACTIVITIES)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -109,6 +113,35 @@ public class FirebaseDBConnection{
         });
     }
 
+    public void checkActivities(BeginActivitiesActivity activity){
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        DocumentReference docRef = firestore.collection(Constant.PATIENT_SCORES)
+                //.document(getCurrentUserEmail())
+                .document("malone@gmail.com")
+                .collection(Constant.SCORES)
+                .document(date)
+                .collection("results")
+                .document("Stand with your feet side-by-side");
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        activity.doesDocumentExist(true);
+                    } else {
+                        activity.doesDocumentExist(false);
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    activity.hideProgressDialog();
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
     public void getCurrentUserDetails(LoginActivity activity){
         firestore.collection(Constant.USER)
                 .document(getCurrentUserID())
@@ -130,31 +163,32 @@ public class FirebaseDBConnection{
                 });
     }
 
-    public void addBalanceScoreToDB(List<Double> accMovementList, String activityName, Context context, BalanceExerciseActivity activity) {
+    public void addBalanceScoreToDB(List<Double> accMovementList, String activityName, Context context, BeginActivitiesActivity activity) {
         BalanceData balanceData = new BalanceData(Collections.max(accMovementList), Collections.min(accMovementList),
                 calcAverage(accMovementList), new Timestamp(new Date()), accMovementList) ;
-
-        firestore.collection(Constant.PATIENT_ACTIVITIES)
-            .document(getCurrentUserEmail())
-            .collection(Constant.ACTIVITIES)
-                .document(activityName)
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        firestore.collection(Constant.PATIENT_SCORES)
+                //.document(getCurrentUserEmail())
+                .document("malone@gmail.com")
                 .collection(Constant.SCORES)
-            .add(balanceData)
-            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                activity.resultsUploadedSuccess();
-                Log.d(TAG, "Document uploaded to database with ID: " + documentReference.getId());
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                activity.hideProgressDialog();
-                Log.w(TAG, "Error adding document", e);
-            }
-        });
-
+                .document(date)
+                .collection("results")
+                .document(activityName)
+                .set(balanceData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(@NonNull Void unused) {
+                        activity.resultsUploadedSuccess();
+                        Log.d(TAG, "Document uploaded to database");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        activity.hideProgressDialog();
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
     }
 
     public void getBalanceProgress(Context context, List<BalanceData> balanceDataList, String activityName, ProgressReportActivity activity){

@@ -5,7 +5,7 @@
     <gradient
         android:angle="360"
         android:endColor="@color/white"
-        android:startColor="@color/black"
+        android:startColor="@color/wine"
         android:type="linear"/>
 
     <corners android:radius="@dimen/button_background_radius" />

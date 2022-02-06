@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#A0ACAE"
+    tools:context=".view.DisplayMessageActivity">
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/tv_heading"-->
+    <!--        android:layout_width="346dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="292dp"-->
+    <!--        android:padding="10dp"-->
+    <!--        android:textAlignment="center"-->
+    <!--        android:textSize="80px"-->
+    <!--        android:textStyle="italic"-->
+    <!--        android:typeface="serif" />-->
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/displayMessage"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:padding="10dp"-->
+    <!--        android:textAlignment="center"-->
+    <!--        android:textSize="50px"-->
+    <!--        android:textStyle="italic"-->
+    <!--        android:typeface="serif" />-->
+
+
+    <TextView
+        android:id="@+id/tv_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="114dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginRight="3dp"
+        android:text="Text"
+        android:textAlignment="center"
+        android:textSize="80px"
+        android:textStyle="italic"
+        android:typeface="serif"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/displayMessage"
+        android:layout_width="match_parent"
+        android:layout_height="441dp"
+        android:layout_marginTop="88dp"
+        android:lines="30"
+        android:maxLines="30"
+        android:text="Text"
+        android:textAlignment="center"
+        android:textSize="50px"
+        android:textStyle="italic"
+        android:typeface="serif"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_heading" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

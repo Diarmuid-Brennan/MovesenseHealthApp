@@ -11,6 +11,7 @@ public class BalanceActivity implements Parcelable {
     private String name;
     private String description;
     private int time_limit;
+    private boolean isCompleted;
 
     public BalanceActivity(){
 
@@ -20,6 +21,7 @@ public class BalanceActivity implements Parcelable {
         this.name = name;
         this.description = description;
         this.time_limit = time_limit;
+        isCompleted = false;
     }
 
     protected BalanceActivity(Parcel in) {

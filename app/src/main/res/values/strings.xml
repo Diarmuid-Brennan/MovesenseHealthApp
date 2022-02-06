@@ -73,6 +73,29 @@
     <string name="no_data_found">Database has no results stored for this exercise</string>
     <string name="no_activities_set">No activities have been set</string>
     <string name="doctors_email_id">Doctors Email address</string>
-
+    <string name="begin_activity">Begin Activity</string>
+    <string name="activity_description">Activity Description</string>
+    <string name="describe_activities">Directions \n\n- There are four standing positions that get progressively harder to maintain.\n
+        1. Stand with your feet side-by-side  \n
+        2.Place the instep of one foot so it is touching the big toe of the other foot.  \n
+        3.Tandem stance Place one foot in front of the other, heel touching toes  \n
+        4. Stand on one foot.\n
+        The patient can get help them assume the correct position. When the patient is steady, let go, and time how long they can maintain the position,
+        but remain ready to assist the patient if they should lose their balance.
+        If the patient can hold a position for 10 seconds without moving their feet or needing support, go on to the next position.
+        If not, STOP the test. Patients should not use an assistive device (cane or walker) and they should keep their eyes open</string>
+    <string name="completed_exercises">You have completed the exercises for today!!</string>
+    <string name="start_activity">Start Activity</string>
+    <string name="begin_next_activity">Select start activity button to begin next activity.</string>
+    <string name="activities_completed">You have already completed the activities for today. Please try again tomorrow!!</string>
+    <string name="you_completed_an_activity">You have successfully completed the activity.\n
+        To begin the next activity please select the start activity button.</string>
+    <string name="you_completed_all_activities">You have successfully completed all the activities.\n
+        Try again tomorrow. Keep up the good work.</string>
+    <string name="you_failed_an_activity">You did not mange too successfully complete the activity.\n
+         Try again tomorrow. Keep up the good work.</string>
+    <string name="Congratulations">Congratulations</string>
+    <string name="Hard_Luck">Hard Luck</string>
+    <string name="view_progress">View Progress</string>
 
 </resources>

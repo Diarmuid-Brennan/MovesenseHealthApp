@@ -1,31 +1,38 @@
 package com.example.movesensehealthtrackerapp.view;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
-import com.example.movesensehealthtrackerapp.model.EcgModel;
-import com.example.movesensehealthtrackerapp.model.HeartRate;
+import com.example.movesensehealthtrackerapp.model.BalanceActivity;
 import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
 import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.example.movesensehealthtrackerapp.utils.Constant;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
@@ -35,91 +42,109 @@ import com.movesense.mds.MdsSubscription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class BalanceExerciseActivity extends BaseActivity implements View.OnClickListener{
+public class BeginActivitiesActivity extends BaseActivity implements View.OnClickListener{
+
     // Sensor subscription
     private MdsSubscription mdsSubscription;
-
     public static Context context;
-    //private final int MS_IN_SECOND = 1000;
-    private static final String LOG_TAG = BalanceExerciseActivity.class.getSimpleName();
-    private String connectedSerial;
     private int time_limit;
     private String activityName;
     private Mds mMds;
+    private boolean activityCancelled = false;
 
     //view
     private LineChart mChart;
     private TextView xAxisTextView;
     private TextView yAxisTextView;
     private TextView zAxisTextView;
-    private TextView heartRateTextView;
-    private TextView beatIntervalTextview;
+    private TextView displayActName;
+    private Button startActivity;
 
     private List<Integer> ecgSampleDataList = new ArrayList<>();
     private List<Double> accMovementList = new ArrayList<>();
     private double[] previousValue = {0, 0, 0};
-    private FirebaseDBConnection firebaseDBConnection;
     private Button exitButton;
     private long timestamp = 0;
     private long SetExerciseTimeLength;
     private ToneGenerator tg;
+    private int activityListPosition = 0;
 
+    private FirebaseDBConnection firebaseDBConnection;
+    private static final String LOG_TAG = BeginActivitiesActivity.class.getSimpleName();
 
+    private List<BalanceActivity> activities = new ArrayList<>();
+    private String connectedSerial;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_begin_activities);
         Bundle extras = getIntent().getExtras();
         connectedSerial = extras.getString(Constant.SERIAL);
 
-        //change to int and set to SetExerciseTimeLength
-        activityName = extras.getString(Constant.NAME);
-        time_limit = extras.getInt(Constant.TIME_LIMIT)*1000;
-        SetExerciseTimeLength = time_limit;
-
-        setContentView(R.layout.activity_acc);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+            }
+        } else {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
+        firebaseDBConnection = new FirebaseDBConnection();
+        SetExerciseTimeLength = 10;
 
         mChart = (LineChart) findViewById(R.id.linearAcc_lineChart);
         xAxisTextView = (TextView) findViewById(R.id.x_axis_textView);
         yAxisTextView = (TextView) findViewById(R.id.y_axis_textView);
         zAxisTextView = (TextView) findViewById(R.id.z_axis_textView);
-        heartRateTextView = (TextView) findViewById(R.id.heartRateTextview);
-        beatIntervalTextview = (TextView) findViewById(R.id.beatIntervalTextView);
+        displayActName = (TextView) findViewById(R.id.activity_name);
 
         xAxisTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
         yAxisTextView.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
         zAxisTextView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
 
-        exitButton = (Button) findViewById(R.id.exitButton);
-        exitButton.setOnClickListener(this);
+        startActivity = (Button) findViewById(R.id.startActivity);
+        startActivity.setOnClickListener(this);
+        startActivity.setEnabled(false);
 
         context = getApplicationContext();
+        checkIfActivityAlreadyCompleted();
+
+    }
+
+    private void checkIfActivityAlreadyCompleted(){
+        showProgressDialog(getString(R.string.please_wait));
+        firebaseDBConnection.checkActivities(this);
+    }
+
+    private void initialiseChart() {
         // Init Empty Chart
         mChart.setData(new LineData());
-        mChart.getDescription().setText("Linear Acc");
+        mChart.getDescription().setText(activities.get(activityListPosition).getActivityName());
         mChart.setTouchEnabled(false);
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.invalidate();
 
-        firebaseDBConnection = new FirebaseDBConnection();
-        tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+    }
 
-        try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void doesDocumentExist(boolean exists){
+        hideProgressDialog();
+        if(exists){
+            Toast.makeText(this, getString(R.string.activities_completed), Toast.LENGTH_SHORT).show();
         }
-        subscribeToSensors();
+        else{
+            retrieveActivitiesFromDatabase();
+        }
     }
 
 
-    private void subscribeToSensors() {
+    public void subscribeToSensors() {
+
         if (mdsSubscription != null) {
             unsubscribe();
         }
@@ -144,9 +169,10 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
                         if (accResponse != null && accResponse.body.array.length > 0) {
                             if(timestamp == 0) {
                                 timestamp = accResponse.body.timestamp;
-                            }else if(accResponse.body.timestamp > timestamp+SetExerciseTimeLength){
-                                tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+                            }else if(accResponse.body.timestamp > timestamp+time_limit){
                                 timestamp = 0;
+                                tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 50000);
+                                tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
                                 unsubscribe();
                                 addScoreToDatabase();
                             }
@@ -167,7 +193,11 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
                             previousValue = Arrays.copyOf(currentValue, currentValue.length);
                             mLineData.addEntry(new Entry(accResponse.body.timestamp / 100, (float) movement), 0);
                             accMovementList.add(movement);
-
+                            if(movement> 30){
+                                tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 50000);
+                                tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
+                                cancelActivity();
+                            }
 
                             mChart.notifyDataSetChanged();
                             mChart.setVisibleXRangeMaximum(Constant.DISPLAY_LIMIT);
@@ -183,7 +213,6 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
 
                 });
     }
-
 
     private void unsubscribe() {
         if (mdsSubscription != null) {
@@ -205,18 +234,84 @@ public class BalanceExerciseActivity extends BaseActivity implements View.OnClic
         return set;
     }
 
-    public void onClick(View v) {
-        onBackPressed();
+    private void cancelActivity(){
+        unsubscribe();
+        activityCancelled = true;
+        addScoreToDatabase();
     }
 
     private void addScoreToDatabase() {
         showProgressDialog(getString(R.string.please_wait));
-        //firebaseDBConnection.addBalanceScoreToDB(accMovementList, activityName, context, this);
+        firebaseDBConnection.addBalanceScoreToDB(accMovementList, activityName, context, this);
     }
 
     public void resultsUploadedSuccess(){
         hideProgressDialog();
-        Toast.makeText(this, getString(R.string.balnce_results_uploaded_successfully), Toast.LENGTH_SHORT).show();
+        if(activityCancelled){
+            Intent displayMessageIntent = new Intent(this, DisplayMessageActivity.class);
+            displayMessageIntent.putExtra("message", getString(R.string.you_failed_an_activity));
+            displayMessageIntent.putExtra("heading", getString(R.string.Hard_Luck));
+            startActivity(displayMessageIntent);
+            startActivity.setEnabled(false);
+        }
+        else{
+            if(activityListPosition < 3){
+                Intent displayMessageIntent = new Intent(this, DisplayMessageActivity.class);
+                displayMessageIntent.putExtra("message", getString(R.string.you_completed_an_activity));
+                displayMessageIntent.putExtra("heading", getString(R.string.Congratulations));
+                startActivity(displayMessageIntent);
+                activityListPosition++;
+                accMovementList.clear();
+                startActivity();
+            }
+            else{
+                Intent displayMessageIntent = new Intent(this, DisplayMessageActivity.class);
+                displayMessageIntent.putExtra("message", getString(R.string.you_completed_all_activities));
+                displayMessageIntent.putExtra("heading", getString(R.string.Congratulations));
+                startActivity(displayMessageIntent);
+                startActivity.setEnabled(false);
+            }
+        }
+
     }
 
+    private void retrieveActivitiesFromDatabase(){
+        showProgressDialog(getString(R.string.please_wait));
+        firebaseDBConnection.getBalanceActivities(this);
+    }
+
+    public void progressRetrievedSuccess(List<BalanceActivity> activity){
+        hideProgressDialog();
+        activities = activity;
+        startActivity();
+        startActivity.setEnabled(true);
+    }
+
+    public void progressRetrievedFailed(){
+        hideProgressDialog();
+        Toast.makeText(this, getString(R.string.no_activities_set), Toast.LENGTH_SHORT).show();
+    }
+
+    public void startActivity(){
+        activityName = activities.get(activityListPosition).getActivityName();
+        time_limit = activities.get(activityListPosition).getTime_limit()*1000;
+        displayActName.setText(activities.get(activityListPosition).getActivityName());
+        initialiseChart();
+    }
+
+    //public void onClick(View v) {
+    //    onBackPressed();
+    //}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.startActivity:
+                Intent displayCountdown = new Intent(this, CountdownActivity.class);
+                startActivity(displayCountdown);
+                subscribeToSensors();
+                break;
+            default:
+                break;
+        }
+    }
 }

@@ -30,6 +30,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovesenseHealthTrackerApp">
         <activity
+            android:name=".view.CountdownActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.CustomTheme"/>
+        <activity
+            android:name=".view.DisplayMessageActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.CustomTheme" />
+        <activity
+            android:name=".view.BeginActivitiesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ActivityDescriptionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
+        <activity
             android:name=".view.ForgotPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -64,18 +79,18 @@
         <activity
             android:name=".view.ActivityDetailsActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
             android:name=".view.ExerciseDescriptionActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
             android:name=".view.BalanceExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".view.BalanceExerciseListActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
