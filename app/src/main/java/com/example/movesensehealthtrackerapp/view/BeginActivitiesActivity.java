@@ -1,7 +1,12 @@
 package com.example.movesensehealthtrackerapp.view;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.model.BalanceActivity;
+import com.example.movesensehealthtrackerapp.model.BalanceData;
 import com.example.movesensehealthtrackerapp.model.LinearAcceleration;
 import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.example.movesensehealthtrackerapp.utils.Constant;
@@ -34,6 +40,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.firebase.Timestamp;
 import com.google.gson.Gson;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsException;
@@ -42,6 +49,8 @@ import com.movesense.mds.MdsSubscription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,6 +63,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     private String activityName;
     private Mds mMds;
     private boolean activityCancelled = false;
+    private boolean activityCompleted = false;
 
     //view
     private LineChart mChart;
@@ -76,6 +86,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     private static final String LOG_TAG = BeginActivitiesActivity.class.getSimpleName();
 
     private List<BalanceActivity> activities = new ArrayList<>();
+    private List<BalanceData> balanceResults = new ArrayList<>();
     private String connectedSerial;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +141,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.invalidate();
 
+
     }
 
     public void doesDocumentExist(boolean exists){
@@ -143,7 +155,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     }
 
 
-    public void subscribeToSensors() {
+    private void subscribeToSensors() {
 
         if (mdsSubscription != null) {
             unsubscribe();
@@ -173,8 +185,10 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                                 timestamp = 0;
                                 tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 50000);
                                 tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
+                                activityCompleted = true;
                                 unsubscribe();
                                 addScoreToDatabase();
+
                             }
 
                             LinearAcceleration.Array arrayData = accResponse.body.array[0];
@@ -196,7 +210,9 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                             if(movement> 30){
                                 tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 50000);
                                 tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
-                                cancelActivity();
+                                unsubscribe();
+                                activityCancelled = true;
+                                addScoreToDatabase();
                             }
 
                             mChart.notifyDataSetChanged();
@@ -212,6 +228,15 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                     }
 
                 });
+    }
+
+    private double calcAverage(List<Double> accMovementList)
+    {
+        double sum = 0;
+        for (double i : accMovementList) {
+            sum+=i;
+        }
+        return sum/(double) accMovementList.size();
     }
 
     private void unsubscribe() {
@@ -234,18 +259,17 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         return set;
     }
 
-    private void cancelActivity(){
-        unsubscribe();
-        activityCancelled = true;
-        addScoreToDatabase();
-    }
-
     private void addScoreToDatabase() {
         showProgressDialog(getString(R.string.please_wait));
-        firebaseDBConnection.addBalanceScoreToDB(accMovementList, activityName, context, this);
+        BalanceData balanceData = new BalanceData(Collections.max(accMovementList), Collections.min(accMovementList),
+                calcAverage(accMovementList), new Timestamp(new Date()), activityCompleted, activityName) ;
+        balanceResults.add(balanceData);
+        firebaseDBConnection.addBalanceScoreListToDB(balanceResults,this);
+
     }
 
     public void resultsUploadedSuccess(){
+        activityCompleted = false;
         hideProgressDialog();
         if(activityCancelled){
             Intent displayMessageIntent = new Intent(this, DisplayMessageActivity.class);
@@ -262,6 +286,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                 startActivity(displayMessageIntent);
                 activityListPosition++;
                 accMovementList.clear();
+                startActivity.setEnabled(true);
                 startActivity();
             }
             else{
@@ -306,12 +331,26 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.startActivity:
+                startActivity.setEnabled(false);
                 Intent displayCountdown = new Intent(this, CountdownActivity.class);
-                startActivity(displayCountdown);
+               //startActivity(displayCountdown);
+                startActivityForResult(displayCountdown, 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
                 subscribeToSensors();
                 break;
             default:
                 break;
         }
     }
+
 }

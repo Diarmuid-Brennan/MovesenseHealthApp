@@ -50,7 +50,6 @@
     <com.example.movesensehealthtrackerapp.utils.CustomButtonView
         android:id="@+id/begin_exercise"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="200dp"
         android:text="@string/begin_activity"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -64,22 +63,21 @@
         android:textColor="@android:color/white"
         android:textSize="@dimen/btn_textSize"/>
 
-    <com.example.movesensehealthtrackerapp.utils.CustomButtonView
-        android:id="@+id/view_progress"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="200dp"
-        android:text="@string/view_progress"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/button_background"
-        android:foreground="?attr/selectableItemBackground"
-        android:paddingTop="@dimen/btn_padding"
-        android:paddingBottom="@dimen/btn_padding"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/btn_textSize"/>
+        <com.example.movesensehealthtrackerapp.utils.CustomButtonView
+            android:id="@+id/view_progress"
+            android:text="@string/view_progress"
+            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/btn_padding"
+            android:paddingBottom="@dimen/btn_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_textSize"/>
 
     </LinearLayout>
 

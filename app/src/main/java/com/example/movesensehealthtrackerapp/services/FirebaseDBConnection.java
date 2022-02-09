@@ -119,9 +119,7 @@ public class FirebaseDBConnection{
                 //.document(getCurrentUserEmail())
                 .document("malone@gmail.com")
                 .collection(Constant.SCORES)
-                .document(date)
-                .collection("results")
-                .document("Stand with your feet side-by-side");
+                .document(date);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -163,18 +161,17 @@ public class FirebaseDBConnection{
                 });
     }
 
-    public void addBalanceScoreToDB(List<Double> accMovementList, String activityName, Context context, BeginActivitiesActivity activity) {
-        BalanceData balanceData = new BalanceData(Collections.max(accMovementList), Collections.min(accMovementList),
-                calcAverage(accMovementList), new Timestamp(new Date()), accMovementList) ;
+
+    public void addBalanceScoreListToDB(List<BalanceData> balanceScores, BeginActivitiesActivity activity) {
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Map<String,Object> map = new HashMap<String,Object>();
+        map = balanceScores.get(0).ConvertObjectToMap(balanceScores);
         firestore.collection(Constant.PATIENT_SCORES)
                 //.document(getCurrentUserEmail())
                 .document("malone@gmail.com")
                 .collection(Constant.SCORES)
                 .document(date)
-                .collection("results")
-                .document(activityName)
-                .set(balanceData)
+                .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(@NonNull Void unused) {
@@ -190,6 +187,8 @@ public class FirebaseDBConnection{
                     }
                 });
     }
+
+
 
     public void getBalanceProgress(Context context, List<BalanceData> balanceDataList, String activityName, ProgressReportActivity activity){
         firestore.collection(Constant.PATIENT_ACTIVITIES)
@@ -223,53 +222,5 @@ public class FirebaseDBConnection{
             }
         });
     }
-
-    public void addHeartRateScoreToDB(List<Integer> ecgSampleDataList, Context context) {
-        Map<String, Object> initialHeartRateScore = new HashMap<>();
-
-        initialHeartRateScore.put("Max_Value", Collections.max(ecgSampleDataList));
-        initialHeartRateScore.put("Min_Value", Collections.min(ecgSampleDataList));
-        initialHeartRateScore.put("Avg_Value", calcAverage1(ecgSampleDataList));
-        initialHeartRateScore.put("Date_set", new Timestamp(new Date()));
-        initialHeartRateScore.put("ecgData", ecgSampleDataList);
-
-        // Add a new document with a generated ID
-        firestore.collection("balanceEx1_hr_score")
-                .add(initialHeartRateScore)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(context, "Updated database", Toast.LENGTH_SHORT).show();
-                        //Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, "Updated database: failed", Toast.LENGTH_SHORT).show();
-                        //Log.w(TAG, "Error adding document", e);
-                    }
-                });
-    }
-
-    private double calcAverage(List<Double> accMovementList)
-    {
-        double sum = 0;
-        for (double i : accMovementList) {
-            sum+=i;
-        }
-        return sum/(double) accMovementList.size();
-    }
-
-    private double calcAverage1(List<Integer> accMovementList)
-    {
-        double sum = 0;
-        for (int i : accMovementList) {
-            sum+=i;
-        }
-        return sum/(double) accMovementList.size();
-    }
-
-
 
 }

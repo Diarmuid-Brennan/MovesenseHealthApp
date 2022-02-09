@@ -2,6 +2,8 @@ package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -14,10 +16,13 @@ import com.example.movesensehealthtrackerapp.R;
 public class CountdownActivity extends AppCompatActivity {
     public int counter = 3;
     private ToneGenerator tg;
+    BeginActivitiesActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_countdown);
+
+        activity = new BeginActivitiesActivity();
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics((dm));
@@ -40,6 +45,9 @@ public class CountdownActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 counttime.setText("Begin");
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+
                 finish();
             }
         }.start();
