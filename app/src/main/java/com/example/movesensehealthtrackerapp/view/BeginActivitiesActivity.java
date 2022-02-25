@@ -47,6 +47,7 @@ import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,8 +74,12 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     private TextView displayActName;
     private Button startActivity;
 
-    private List<Integer> ecgSampleDataList = new ArrayList<>();
-    private List<Double> accMovementList = new ArrayList<>();
+    //private List<Double> accMovementList = new ArrayList<>();
+    private List<Double> feetTogetherList = new ArrayList<>();
+    private List<Double> instepList = new ArrayList<>();
+    private List<Double> tandemList = new ArrayList<>();
+    private List<Double> oneFootList = new ArrayList<>();
+
     private double[] previousValue = {0, 0, 0};
     private Button exitButton;
     private long timestamp = 0;
@@ -124,8 +129,8 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         startActivity.setEnabled(false);
 
         context = getApplicationContext();
-        checkIfActivityAlreadyCompleted();
-
+        //checkIfActivityAlreadyCompleted();
+        retrieveActivitiesFromDatabase();
     }
 
     private void checkIfActivityAlreadyCompleted(){
@@ -155,7 +160,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     }
 
 
-    private void subscribeToSensors() {
+    private void subscribeToSensors(List<Double> accMovementList ) {
 
         if (mdsSubscription != null) {
             unsubscribe();
@@ -187,7 +192,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                                 tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
                                 activityCompleted = true;
                                 unsubscribe();
-                                addScoreToDatabase();
+                                addScoreToDatabase(accMovementList);
 
                             }
 
@@ -212,7 +217,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                                 tg.startTone(ToneGenerator.TONE_PROP_BEEP,2000);
                                 unsubscribe();
                                 activityCancelled = true;
-                                addScoreToDatabase();
+                                addScoreToDatabase(accMovementList);
                             }
 
                             mChart.notifyDataSetChanged();
@@ -259,10 +264,12 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         return set;
     }
 
-    private void addScoreToDatabase() {
+    private void addScoreToDatabase(List<Double> accMovementList) {
         showProgressDialog(getString(R.string.please_wait));
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
         BalanceData balanceData = new BalanceData(Collections.max(accMovementList), Collections.min(accMovementList),
-                calcAverage(accMovementList), new Timestamp(new Date()), activityCompleted, activityName) ;
+                calcAverage(accMovementList), date, accMovementList, activityCompleted, activityName) ;
         balanceResults.add(balanceData);
         firebaseDBConnection.addBalanceScoreListToDB(balanceResults,this);
 
@@ -285,7 +292,7 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                 displayMessageIntent.putExtra("heading", getString(R.string.Congratulations));
                 startActivity(displayMessageIntent);
                 activityListPosition++;
-                accMovementList.clear();
+                //accMovementList.clear();
                 startActivity.setEnabled(true);
                 startActivity();
             }
@@ -346,7 +353,23 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 1:
-                subscribeToSensors();
+                switch (activityName) {
+                    case "Stand with your feet side-by-side":
+                        subscribeToSensors(feetTogetherList);
+                        break;
+                    case "Instep Stance":
+                        subscribeToSensors(instepList);
+                        break;
+                    case "Stand on one foot":
+                        subscribeToSensors(oneFootList);
+                        break;
+                    case "Tandem Stance":
+                        subscribeToSensors(tandemList);
+                        break;
+                    default:
+                        break;
+                }
+                //subscribeToSensors();
                 break;
             default:
                 break;

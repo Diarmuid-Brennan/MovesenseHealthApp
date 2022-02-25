@@ -1,14 +1,10 @@
 package com.example.movesensehealthtrackerapp.services;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.movesensehealthtrackerapp.model.BalanceActivity;
-import com.example.movesensehealthtrackerapp.view.BalanceExerciseActivity;
-import com.example.movesensehealthtrackerapp.view.BalanceExerciseListActivity;
 import com.example.movesensehealthtrackerapp.view.BeginActivitiesActivity;
 import com.example.movesensehealthtrackerapp.view.LoginActivity;
 import com.example.movesensehealthtrackerapp.view.ProgressReportActivity;
@@ -20,19 +16,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +111,8 @@ public class FirebaseDBConnection{
                 //.document(getCurrentUserEmail())
                 .document("malone@gmail.com")
                 .collection(Constant.SCORES)
-                .document(date);
+                //.document(date);
+                .document("2022-02-11");
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -165,12 +158,13 @@ public class FirebaseDBConnection{
     public void addBalanceScoreListToDB(List<BalanceData> balanceScores, BeginActivitiesActivity activity) {
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         Map<String,Object> map = new HashMap<String,Object>();
-        map = balanceScores.get(0).ConvertObjectToMap(balanceScores);
+        map = ConvertObjectToMap(balanceScores);
         firestore.collection(Constant.PATIENT_SCORES)
                 //.document(getCurrentUserEmail())
                 .document("malone@gmail.com")
                 .collection(Constant.SCORES)
-                .document(date)
+                //.document(date)
+                .document("2022-02-14")
                 .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -188,16 +182,32 @@ public class FirebaseDBConnection{
                 });
     }
 
+    private  Map<String,Object> ConvertObjectToMap(List<BalanceData> balanceData) {
+        Map<String,Object> list = new HashMap<String,Object>();
+
+        for(int i =0; i< balanceData.size(); i++){
+            Map<String, Object> scoreMap = new HashMap<String,Object>();
+            scoreMap.put("activityName", balanceData.get(i).getActivityName());
+            scoreMap.put("completed", balanceData.get(i).getCompleted());
+            scoreMap.put("date_set", balanceData.get(i).getDate_set());
+            scoreMap.put("avg_value", balanceData.get(i).getAvg_Value());
+            scoreMap.put("acc_data", balanceData.get(i).getAccData());
+            scoreMap.put("max_value", balanceData.get(i).getMax_value());
+            scoreMap.put("min_value", balanceData.get(i).getMin_value());
+            list.put(balanceData.get(i).getActivityName(),scoreMap);
+
+        }
+        return list;
+    }
 
 
-    public void getBalanceProgress(Context context, List<BalanceData> balanceDataList, String activityName, ProgressReportActivity activity){
-        firestore.collection(Constant.PATIENT_ACTIVITIES)
-                .document(getCurrentUserEmail())
-                .collection(Constant.ACTIVITIES)
-                .document(activityName)
+    public void getBalanceProgress(ProgressReportActivity activity){
+        //List<Map<String,Object>> allDocuments = new ArrayList<>();
+        List<Map<String, Object>> allDocuments = new ArrayList<>();
+        firestore.collection(Constant.PATIENT_SCORES)
+                //.document(getCurrentUserEmail())
+                .document("malone@gmail.com")
                 .collection(Constant.SCORES)
-                .orderBy(Constant.DATE_SET, Query.Direction.DESCENDING)
-                .limit(7)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -205,10 +215,16 @@ public class FirebaseDBConnection{
                         if (!queryDocumentSnapshots.isEmpty()) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                             for (DocumentSnapshot document : list) {
-                                BalanceData balanceData = document.toObject(BalanceData.class);
-                                balanceDataList.add(balanceData);
+                                Map<String, Object> data =  document.getData();
+                                allDocuments.add(data);
                             }
-                            activity.progressRetrievedSuccess();
+                            int size = allDocuments.size();
+                            List<Map<String,Object>> lastSeven = new ArrayList<>();
+                            for (int i = size-1; i >= size-7; i--){
+                                lastSeven.add(allDocuments.get(i));
+                            }
+
+                            activity.progressRetrievedSuccess(lastSeven);
                         } else {
                             activity.progressRetrievedFailed();
                             Log.d(TAG, "No data currently stored in database");

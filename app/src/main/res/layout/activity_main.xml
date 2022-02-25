@@ -39,6 +39,13 @@
             android:textAlignment="center"
             app:layout_constraintTop_toBottomOf="@id/listScanResult"
             android:text="@string/connectToTextView" />
+    <TextView
+        android:id="@+id/unsuccessfulConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/connectToTextView"
+        android:text="@string/unsuccessful_connection" />
 
 
     <com.example.movesensehealthtrackerapp.utils.CustomButtonView
@@ -55,12 +62,32 @@
         android:paddingBottom="@dimen/btn_padding"
         android:textColor="@android:color/white"
         android:textSize="@dimen/btn_textSize"
-        android:onClick="balanceExListClicked"
+        android:onClick="onExerciseListClicked"
         android:text="@string/balanceExListButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/connectToTextView"
-        android:enabled="false"/>
+        app:layout_constraintTop_toBottomOf="@id/unsuccessfulConnection"
+        />
+
+    <com.example.movesensehealthtrackerapp.utils.CustomButtonView
+        android:id="@+id/logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_background"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingTop="@dimen/btn_padding"
+        android:paddingBottom="@dimen/btn_padding"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/btn_textSize"
+        android:text="@string/logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/balanceExListButton"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

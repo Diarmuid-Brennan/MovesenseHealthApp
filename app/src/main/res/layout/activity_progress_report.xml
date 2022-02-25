@@ -8,19 +8,71 @@
     tools:context=".view.ProgressReportActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout0"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/progress_report"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/progress_report"
             android:textAlignment="center"
-            android:textSize="18sp"/>
+            android:text="@string/progress_report"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/wine"/>
+
+        <TextView
+            android:id="@+id/lastActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/last_activity_completed"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/activities_completed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/number_of_activities_successfully_completed"
+            android:layout_marginTop="20dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/wine"/>
+
+        <TextView
+            android:id="@+id/feetTogether"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/feet_together"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/instepStance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/instep"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tandemStance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/tandem"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/oneFoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/one_foot"
+            android:textSize="16sp" />
+
+
 
     </LinearLayout>
     <LinearLayout
@@ -29,11 +81,16 @@
         android:layout_marginTop="10dp"
         android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="301dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/progress_lineChart"
             android:layout_width="match_parent"
-            android:layout_height="500dp" />
+            android:layout_height="372dp" />
 
     </LinearLayout>
 

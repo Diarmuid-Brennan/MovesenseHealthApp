@@ -39,7 +39,8 @@
             android:theme="@style/AppTheme.CustomTheme" />
         <activity
             android:name=".view.BeginActivitiesActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
         <activity
             android:name=".view.ActivityDescriptionActivity"
             android:exported="false"
@@ -75,7 +76,8 @@
         </activity>
         <activity
             android:name=".view.ProgressReportActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MovesenseHealthTrackerApp.NoActionBar"/>
         <activity
             android:name=".view.ActivityDetailsActivity"
             android:exported="false"

@@ -23,6 +23,7 @@ import com.example.movesensehealthtrackerapp.R;
 import com.example.movesensehealthtrackerapp.model.MyScanResult;
 import com.example.movesensehealthtrackerapp.utils.Constant;
 import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
@@ -34,7 +35,8 @@ import java.util.ArrayList;
 
 import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener  {
+//public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener  {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     static MyScanResult device = null;
     // MDS
@@ -45,6 +47,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private ArrayList<MyScanResult> mScanResArrayList = new ArrayList<>();
     private ArrayAdapter<MyScanResult> mScanResArrayAdapter;
     private CustomButtonView exerciseListButton;
+    private CustomButtonView logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,16 +74,13 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         mScanResultListView.setOnItemClickListener(this);
 
         exerciseListButton = findViewById(R.id.balanceExListButton);
-        exerciseListButton.setOnClickListener(this);
-        exerciseListButton.setEnabled(false);
+        //exerciseListButton.setOnClickListener(this);
+        exerciseListButton.setVisibility(View.INVISIBLE);
+        //exerciseListButton.setEnabled(false);
         requestNeededPermissions();
 
-        initMds();
-        initializeScan();
-        //balList();
-
-        //when logout button is implemented
-//        btn_logout.setOnClickListener(new View.OnClickListener() {
+//        logoutButton = findViewById(R.id.logout_button);
+//        logoutButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //
@@ -90,6 +90,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 //                finish();
 //            }
 //        });
+        initMds();
+        initializeScan();
+
     }
 
     private void initMds() {
@@ -197,7 +200,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     }
                 }
                 onConnectionSuccessDisplayMessage();
-                exerciseListButton.setEnabled(true);
+                //exerciseListButton.setVisibility(View.VISIBLE);
+                findViewById(R.id.balanceExListButton).setVisibility(View.VISIBLE);
+                //exerciseListButton.setEnabled(true);
 
                 mScanResArrayAdapter.notifyDataSetChanged();
             }
@@ -231,27 +236,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         builder.create().show();
     }
 
-    private void balList(){
+    public void onExerciseListClicked(View view){
         Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
-        balanceExListIntent.putExtra("serial", "2");
-        startActivity(balanceExListIntent);//refresh is onClick name given to the button
+        balanceExListIntent.putExtra(Constant.SERIAL, device.connectedSerial);
+        startActivity(balanceExListIntent);
     }
 
-    public void balanceExListClicked(View view){
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.balanceExListButton:
-                Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
-                balanceExListIntent.putExtra(Constant.SERIAL, device.connectedSerial);
-                startActivity(balanceExListIntent);
-                break;
-            default:
-                break;
-        }
-
-    }
 }

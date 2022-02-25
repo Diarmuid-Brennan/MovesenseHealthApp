@@ -20,7 +20,7 @@
     <string name="performExercise">Perform Exercise</string>
     <string name="viewProgressButton">View  Progress</string>
     <string name="balanceExListButton">View Exercise List</string>
-    <string name="connectToTextView">Select device to connect to:</string>
+    <string name="connectToTextView">Select option to connect to Movesense device :</string>
     <string name="exitButton">Exit</string>
 
     <!--login-->
@@ -97,5 +97,14 @@
     <string name="Congratulations">Congratulations</string>
     <string name="Hard_Luck">Hard Luck</string>
     <string name="view_progress">View Progress</string>
+    <string name="last_activity_completed">Last Activity taken :</string>
+    <string name="number_of_activities_successfully_completed">Activities successfully completed</string>
+    <string name="feet_together">Stand with your feet side-by-side : </string>
+    <string name="instep">Instep Stance : </string>
+    <string name="tandem">Tandem Stance : </string>
+    <string name="one_foot">Stand on one foot : </string>
+    <string name="unsuccessful_connection">If deice is not connected to within 30 seconds, please restart the application</string>
+    <string name="logout">Logout</string>
+    <string name="averageScores">Average Movements - last 7 activities</string>
 
 </resources>

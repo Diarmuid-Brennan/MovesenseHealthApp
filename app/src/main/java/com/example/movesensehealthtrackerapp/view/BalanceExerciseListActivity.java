@@ -34,6 +34,7 @@ public class BalanceExerciseListActivity extends BaseActivity implements View.On
 
         private CustomButtonView activityDescription;
         private CustomButtonView beginActivity;
+        private CustomButtonView progressReport;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,9 @@ public class BalanceExerciseListActivity extends BaseActivity implements View.On
 
             beginActivity = (CustomButtonView) findViewById(R.id.begin_exercise);
             beginActivity.setOnClickListener(this);
+
+            progressReport = (CustomButtonView) findViewById(R.id.view_progress);
+            progressReport.setOnClickListener(this);
 
             //retrieveActivitiesFromDatabase();
         }
