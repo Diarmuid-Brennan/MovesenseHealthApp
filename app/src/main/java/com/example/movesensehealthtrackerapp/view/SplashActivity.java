@@ -1,3 +1,9 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Splash Activity - Displays application logo before accessing the application
+ * Enables bluetooth for the mobile device
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,11 +48,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-//                Intent intent = new Intent(getBaseContext(), BalanceExerciseActivity.class);
-//                intent.putExtra("serial", "1");
-//                intent.putExtra("time_limit", 15);
+                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
             }

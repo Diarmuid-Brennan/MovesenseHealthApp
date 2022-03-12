@@ -1,3 +1,9 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Main Activity - Allows the user to connect to the Movesense device and access the balance activities
+ */
+
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AlertDialog;
@@ -15,7 +21,6 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,10 +40,10 @@ import java.util.ArrayList;
 
 import io.reactivex.disposables.Disposable;
 
-//public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener  {
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener  {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     static MyScanResult device = null;
+
     // MDS
     private Mds mMds;
     static private RxBleClient mBleClient;
@@ -66,40 +71,42 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             );
         }
 
-        // Init Scan UI
         mScanResultListView = (ListView)findViewById(R.id.listScanResult);
         mScanResArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, mScanResArrayList);
         mScanResultListView.setAdapter(mScanResArrayAdapter);
         mScanResultListView.setOnItemClickListener(this);
-
         exerciseListButton = findViewById(R.id.balanceExListButton);
-        //exerciseListButton.setOnClickListener(this);
         exerciseListButton.setVisibility(View.INVISIBLE);
-        //exerciseListButton.setEnabled(false);
+
         requestNeededPermissions();
 
-//        logoutButton = findViewById(R.id.logout_button);
-//        logoutButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                FirebaseAuth.getInstance().signOut();
-//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
+        logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         initMds();
         initializeScan();
-
     }
 
+    /**
+     * Initializes the Movesense Mds API
+     */
     private void initMds() {
         mMds = Mds.builder().build(this);
     }
 
-    void requestNeededPermissions() {
+    /**
+     * requests the users mobile location permissions to access the Movesense sensor device over Bluetooth
+     */
+    public void requestNeededPermissions() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             //continue
@@ -124,15 +131,22 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
+    /**
+     * Creates a BLE client object
+     * @return
+     */
     private RxBleClient getBleClient() {
         if (mBleClient == null) mBleClient = RxBleClient.create(this);
         return mBleClient;
     }
 
     Disposable mScanSubscription;
-    public void initializeScan() {
 
-
+    /**
+     * Scans for nearby Movesense devices over Bluetooth
+     * Display found devices to an adapter list
+     */
+    private void initializeScan() {
         mScanResArrayList.clear();
         mScanResArrayAdapter.notifyDataSetChanged();
 
@@ -161,7 +175,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 );
     }
 
-    public void onScanStopClicked(View view) {
+    /**
+     * Unsubscribes Bluetooth connection from connected device
+     * @param view -takes in the selected adapter list item to disconnect from
+     */
+    private void onScanStopClicked(View view) {
         if (mScanSubscription != null)
         {
             mScanSubscription.dispose();
@@ -169,6 +187,13 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
+    /**
+     * Connects to device selected from adapter list
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position < 0 || position >= mScanResArrayList.size())
@@ -181,6 +206,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
+    /**
+     * Connects to a found deVice over BLE
+     * @param device - takes in the details of the found devices
+     */
     private void connectBLEDevice(MyScanResult device) {
         RxBleDevice bleDevice = getBleClient().getBleDevice(device.macAddress);
 
@@ -200,10 +229,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     }
                 }
                 onConnectionSuccessDisplayMessage();
-                //exerciseListButton.setVisibility(View.VISIBLE);
                 findViewById(R.id.balanceExListButton).setVisibility(View.VISIBLE);
-                //exerciseListButton.setEnabled(true);
-
                 mScanResArrayAdapter.notifyDataSetChanged();
             }
 
@@ -225,10 +251,16 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         });
     }
 
+    /**
+     * Displays a message when the application has successfully connected to a selected Movesense device
+     */
     private void onConnectionSuccessDisplayMessage(){
         Toast.makeText(this, getString(R.string.connected_to_movesense_device), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Displays an error when a connection error occurs with Movesense device
+     */
     private void showConnectionError(MdsException e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.connection_error))
@@ -236,6 +268,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         builder.create().show();
     }
 
+    /**
+     * Button that brings the user to th exercise list activity
+     */
     public void onExerciseListClicked(View view){
         Intent balanceExListIntent = new Intent(this, BalanceExerciseListActivity.class);
         balanceExListIntent.putExtra(Constant.SERIAL, device.connectedSerial);

@@ -1,11 +1,21 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Forgot Password Activity - User can change password
+ * Uses firestore's in-built update password functionality over email
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.movesensehealthtrackerapp.R;
@@ -20,7 +30,6 @@ public class ForgotPasswordActivity extends BaseActivity {
     private Toolbar toolbar;
     private CustomButtonView submitButton;
     private TextInputEditText inputEmail;
-
     private static final String TAG = ForgotPasswordActivity.class.getSimpleName();
 
     @Override
@@ -29,6 +38,17 @@ public class ForgotPasswordActivity extends BaseActivity {
         setContentView(R.layout.activity_forgot_password);
 
         setupBackFunction();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+            }
+        } else {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
 
         inputEmail= findViewById(R.id.forgot_email);
         submitButton = findViewById(R.id.btn_submit);
@@ -64,6 +84,9 @@ public class ForgotPasswordActivity extends BaseActivity {
         });
     }
 
+    /**
+     * adds a button to the toolbar that returns the user to the previous activity
+     */
     private void setupBackFunction(){
         toolbar = (Toolbar) findViewById(R.id.toolbar_forgot_password_activity);
         setSupportActionBar(toolbar);

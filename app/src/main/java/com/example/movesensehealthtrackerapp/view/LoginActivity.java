@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Login Activity - Allows user to log on to the application
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
@@ -13,6 +18,7 @@ import android.view.WindowInsetsController;
 import android.view.WindowManager;
 
 import com.example.movesensehealthtrackerapp.R;
+import com.example.movesensehealthtrackerapp.controller.LoginController;
 import com.example.movesensehealthtrackerapp.model.User;
 import com.example.movesensehealthtrackerapp.services.FirebaseDBConnection;
 import com.example.movesensehealthtrackerapp.utils.CustomButtonView;
@@ -32,7 +38,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private CustomButtonView btn_login;
     private TextViewLight forgot_password;
     private FirebaseAuth mAuth;
-    FirebaseDBConnection firebaseDBConnection;
+    private FirebaseDBConnection firebaseDBConnection;
+    private LoginController loginController;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -55,6 +62,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         mAuth = FirebaseAuth.getInstance();
         firebaseDBConnection = new FirebaseDBConnection();
+        loginController = new LoginController();
 
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
@@ -66,14 +74,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         forgot_password.setOnClickListener(this);
     }
 
+    /**
+     * Authenticates the entered user details with firestore
+     */
     private void loginInRegisteredUser() {
-        if (validateLoginDetails()) {
+        String validatedEmail = email.getText().toString().trim();
+        String validatedPassword = password.getText().toString().trim();
+        if (loginController.validateLoginDetails(validatedEmail, validatedPassword)) {
 
             showProgressDialog(getString(R.string.please_wait));
-            String validatedEmail = email.getText().toString().trim();
-            String validatedPassword = password.getText().toString().trim();
-
-
             mAuth.signInWithEmailAndPassword(validatedEmail, validatedPassword)
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -90,8 +99,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         }
                     });
         }
+        else{
+            showErrorSnackBar(getString(R.string.err_msg_enter_password), true);
+        }
     }
 
+    /**
+     * Method is called after successful authentication
+     * Brings the user to the main activity page
+     * @param user - contains the details of the logged in user
+     */
     public void userLoggedIn(User user){
         hideProgressDialog();
         Log.i("User Details: ", user.getFirstname() + " " + user.getLastName() + " " + user.getEmail());
@@ -101,18 +118,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         finish();
     }
 
-
-    private boolean validateLoginDetails(){
-        if(TextUtils.isEmpty(email.getText().toString().trim())){
-            showErrorSnackBar(getString(R.string.err_msg_enter_email), true);
-            return false;
-        }
-        if(TextUtils.isEmpty(password.getText().toString().trim()) || password.getText().toString().trim().length() < 6){
-            showErrorSnackBar(getString(R.string.err_msg_enter_password), true);
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public void onClick(View v) {

@@ -1,3 +1,9 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Countdown Activity - Displays 3,2,1, countdown before activity is carried out
+ * Returns to the calling activity once the countdown has been completed
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +22,11 @@ import com.example.movesensehealthtrackerapp.R;
 public class CountdownActivity extends AppCompatActivity {
     public int counter = 3;
     private ToneGenerator tg;
-    BeginActivitiesActivity activity;
+    private BeginActivitiesActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_countdown);
-
         activity = new BeginActivitiesActivity();
 
         DisplayMetrics dm = new DisplayMetrics();

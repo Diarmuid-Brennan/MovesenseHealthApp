@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Base Activity - Contains methods carried out by all inheriting activities
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +24,12 @@ abstract class BaseActivity extends AppCompatActivity {
     protected TextViewLight progress;
     protected boolean doubleClickToExit = false;
 
-
+    /**
+     *
+     * Displays a snackbar message on the activity page
+     * @param message - message to be displayed
+     * @param error - if the message to be displayed is an error or not
+     */
     protected void showErrorSnackBar(String message, boolean error){
         Snackbar snackbar =Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
@@ -33,21 +43,29 @@ abstract class BaseActivity extends AppCompatActivity {
         snackbar.show();
     }
 
+    /**
+     * Shows a progress image when loading data from the database
+     * @param display - message to be displayed
+     */
     protected void showProgressDialog(String display){
         progressBar = new ProgressDialog(this);
         progressBar.setContentView(R.layout.dialog_progress);
-
-//        progress = progressBar.findViewById(R.id.tv_progress_text);
-//        progress.setText(display);
         progressBar.setCancelable(false);
         progressBar.setCanceledOnTouchOutside(false);
         progressBar.show();
     }
 
+    /**
+     * Removes the progress image
+     */
     public void hideProgressDialog(){
         progressBar.dismiss();
     }
 
+    /**
+     * Method requiring to select back button twice to exit the application
+     * Logs the user out
+     */
     protected void doubleBackToExit(){
         if(doubleClickToExit){
             FirebaseAuth.getInstance().signOut();

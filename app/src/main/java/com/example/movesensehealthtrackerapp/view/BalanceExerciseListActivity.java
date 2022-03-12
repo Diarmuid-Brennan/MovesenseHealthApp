@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Balance Exercise Activity - Provides access to the balance activities, activity description and progress report
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,10 +68,12 @@ public class BalanceExerciseListActivity extends BaseActivity implements View.On
 
             progressReport = (CustomButtonView) findViewById(R.id.view_progress);
             progressReport.setOnClickListener(this);
-
-            //retrieveActivitiesFromDatabase();
         }
 
+    /**
+     * Onclick method dpr buttons provided
+     * @param v - selected view option
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

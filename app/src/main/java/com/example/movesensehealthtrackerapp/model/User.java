@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 13/03/22
+ * User class - Contains the details of an logged in User
+ */
 package com.example.movesensehealthtrackerapp.model;
 
 public class User {
@@ -6,6 +11,13 @@ public class User {
     private String lastName;
     private String email;
 
+    /**
+     * Constructor
+     * @param userUID - Logged in users firestores UID
+     * @param firstname - Users first name
+     * @param lastName - Users last name
+     * @param email - Users email
+     */
     public User(String userUID, String firstname, String lastName, String email) {
         this.userUID = userUID;
         this.firstname = firstname;

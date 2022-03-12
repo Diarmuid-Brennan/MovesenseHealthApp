@@ -1,6 +1,9 @@
+/**
+ * Diarmuid Brennan
+ * 13/03/22
+ * Linear Acceleration - Serializes the linear acceleration data gathered from the Movesense sensor device
+ */
 package com.example.movesensehealthtrackerapp.model;
-
-
 import com.google.gson.annotations.SerializedName;
 
 public class LinearAcceleration {
@@ -8,6 +11,10 @@ public class LinearAcceleration {
     @SerializedName("Body")
     public final Body body;
 
+    /**
+     * Constructor - Takes in the data passed from the sensor
+     * @param body - sensor data passed
+     */
     public LinearAcceleration(Body body) {
         this.body = body;
     }

@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Begin Activities Activity - User can begin carrying out the balance activities described
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.activity.result.ActivityResult;
@@ -74,14 +79,12 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
     private TextView displayActName;
     private Button startActivity;
 
-    //private List<Double> accMovementList = new ArrayList<>();
     private List<Double> feetTogetherList = new ArrayList<>();
     private List<Double> instepList = new ArrayList<>();
     private List<Double> tandemList = new ArrayList<>();
     private List<Double> oneFootList = new ArrayList<>();
 
     private double[] previousValue = {0, 0, 0};
-    private Button exitButton;
     private long timestamp = 0;
     private long SetExerciseTimeLength;
     private ToneGenerator tg;
@@ -129,26 +132,21 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         startActivity.setEnabled(false);
 
         context = getApplicationContext();
-        //checkIfActivityAlreadyCompleted();
-        retrieveActivitiesFromDatabase();
+        checkIfActivityAlreadyCompleted();
     }
 
+    /**
+     * Method that checks the database if the user has already completed the activities for todays date
+     */
     private void checkIfActivityAlreadyCompleted(){
         showProgressDialog(getString(R.string.please_wait));
         firebaseDBConnection.checkActivities(this);
     }
 
-    private void initialiseChart() {
-        // Init Empty Chart
-        mChart.setData(new LineData());
-        mChart.getDescription().setText(activities.get(activityListPosition).getActivityName());
-        mChart.setTouchEnabled(false);
-        mChart.setAutoScaleMinMaxEnabled(true);
-        mChart.invalidate();
-
-
-    }
-
+    /**
+     * Return method from database check confirming if the activities had already been completed for todays date
+     * @param exists - boolean confirming
+     */
     public void doesDocumentExist(boolean exists){
         hideProgressDialog();
         if(exists){
@@ -159,9 +157,24 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         }
     }
 
+    /**
+     * Initializes the line chart to display the data gathered from the Movesense sensor
+     */
+    private void initialiseChart() {
+        mChart.setData(new LineData());
+        mChart.getDescription().setText(activities.get(activityListPosition).getActivityName());
+        mChart.setTouchEnabled(false);
+        mChart.setAutoScaleMinMaxEnabled(true);
+        mChart.invalidate();
+    }
 
+    /**
+     * Method that subscribes to the Movesense sensor for th duration of an activity
+     * Displays the dat to the line graph
+     * The gathered data is collected and store to the database upon completion of the activity
+     * @param accMovementList - List containing the movement data gathered from a an activity
+     */
     private void subscribeToSensors(List<Double> accMovementList ) {
-
         if (mdsSubscription != null) {
             unsubscribe();
         }
@@ -235,6 +248,11 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                 });
     }
 
+    /**
+     * Calculates the average movement from the list of movement data
+     * @param accMovementList - List containing all movements gathered during activity
+     * @return - the calculated average
+     */
     private double calcAverage(List<Double> accMovementList)
     {
         double sum = 0;
@@ -244,6 +262,9 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         return sum/(double) accMovementList.size();
     }
 
+    /**
+     * Unsubscribes from gathering data from the Movesense sensor
+     */
     private void unsubscribe() {
         if (mdsSubscription != null) {
             mdsSubscription.unsubscribe();
@@ -251,6 +272,12 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         }
     }
 
+    /**
+     * Creates the Line to be displayed on the graph chart
+     * @param name - Gives a name to the line data
+     * @param color - Gives a color to the line data
+     * @return - returns a LineDataSet object
+     */
     private LineDataSet createSet(String name, int color) {
         LineDataSet set = new LineDataSet(null, name);
         set.setLineWidth(2.5f);
@@ -264,6 +291,10 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         return set;
     }
 
+    /**
+     * Updates the activity score to the database
+     * @param accMovementList - list of activity movements gathered during activity
+     */
     private void addScoreToDatabase(List<Double> accMovementList) {
         showProgressDialog(getString(R.string.please_wait));
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -275,6 +306,13 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
 
     }
 
+    /**
+     * return method upon uploading activity results to database
+     * Determines what step to take next
+     * - cancel activity
+     * - perform next activity
+     * - activities completed fro today
+     */
     public void resultsUploadedSuccess(){
         activityCompleted = false;
         hideProgressDialog();
@@ -307,40 +345,52 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
 
     }
 
+    /**
+     * Retrieves the activities to be carried out from the database
+     */
     private void retrieveActivitiesFromDatabase(){
         showProgressDialog(getString(R.string.please_wait));
         firebaseDBConnection.getBalanceActivities(this);
     }
 
+    /**
+     * Return method from retrieving activities from database
+     * @param activity - List of activities
+     */
     public void progressRetrievedSuccess(List<BalanceActivity> activity){
         hideProgressDialog();
         activities = activity;
         startActivity();
         startActivity.setEnabled(true);
     }
-
+    /**
+     * Return method from retrieving activities from database failed
+     */
     public void progressRetrievedFailed(){
         hideProgressDialog();
         Toast.makeText(this, getString(R.string.no_activities_set), Toast.LENGTH_SHORT).show();
     }
 
-    public void startActivity(){
+    /**
+     * Begins each activity and initializes the line chart
+     */
+    private void startActivity(){
         activityName = activities.get(activityListPosition).getActivityName();
         time_limit = activities.get(activityListPosition).getTime_limit()*1000;
         displayActName.setText(activities.get(activityListPosition).getActivityName());
         initialiseChart();
     }
 
-    //public void onClick(View v) {
-    //    onBackPressed();
-    //}
+    /**
+     * Displays a 3,2,1 countdown before an activity is begun when start button is selected
+     * @param v - Takes in the view selected
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.startActivity:
                 startActivity.setEnabled(false);
                 Intent displayCountdown = new Intent(this, CountdownActivity.class);
-               //startActivity(displayCountdown);
                 startActivityForResult(displayCountdown, 1);
                 break;
             default:
@@ -348,6 +398,13 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
         }
     }
 
+    /**
+     * Once the countdown view has completed returns to Begin Activities activity
+     * Displays next activity to be carried out
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -369,7 +426,6 @@ public class BeginActivitiesActivity extends BaseActivity implements View.OnClic
                     default:
                         break;
                 }
-                //subscribeToSensors();
                 break;
             default:
                 break;

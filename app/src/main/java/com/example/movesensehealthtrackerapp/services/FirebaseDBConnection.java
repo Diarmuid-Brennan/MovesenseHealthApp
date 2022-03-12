@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 13/03/22
+ * Firebase Connection class - Contains methods for accessing the data stored on the Firestore database
+ */
 package com.example.movesensehealthtrackerapp.services;
 
 import android.util.Log;
@@ -16,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,14 +40,22 @@ import java.util.Map;
 public class FirebaseDBConnection{
 
     private  FirebaseFirestore firestore;
-
+    private FirebaseAuth mAuth;
     private static final String TAG = FirebaseDBConnection.class.getSimpleName();
 
+    /**
+     * Constructor - initializes the firestore authorization and connection
+     */
     public FirebaseDBConnection() {
         firestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
-
+    /**
+     * Registers a ne user on the database
+     * @param activity
+     * @param user - Users entered details
+     */
     public void registerUser(RegisterActivity activity, User user){
         firestore.collection(Constant.USER)
                 .document(user.getUserUID())
@@ -49,6 +63,7 @@ public class FirebaseDBConnection{
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(@NonNull Void unused) {
+                        activity.registerSuccess();
                         Log.d(TAG, "User registered successfully");
                     }
                 })
@@ -61,7 +76,10 @@ public class FirebaseDBConnection{
                 });
     }
 
-
+    /**
+     * Retrieves the UID for the current logged in User
+     * @return - Users UID
+     */
     public String getCurrentUserID(){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String currentUserID = "";
@@ -69,6 +87,10 @@ public class FirebaseDBConnection{
         return currentUserID;
     }
 
+    /**
+     * Retrieves the email for the current logged in User
+     * @return - Users Email
+     */
     public String getCurrentUserEmail(){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String currentUserEmail = "";
@@ -76,6 +98,10 @@ public class FirebaseDBConnection{
         return currentUserEmail;
     }
 
+    /**
+     * Retrieves the balance activities to be carried out from the database
+     * @param activity
+     */
     public void getBalanceActivities(BeginActivitiesActivity activity){
         List<BalanceActivity> activities = new ArrayList<>();
         firestore.collection(Constant.ACTIVITIES)
@@ -105,14 +131,16 @@ public class FirebaseDBConnection{
         });
     }
 
+    /**
+     * Check to see if the user has already completed the activities to be carried out for todays date
+     * @param activity
+     */
     public void checkActivities(BeginActivitiesActivity activity){
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         DocumentReference docRef = firestore.collection(Constant.PATIENT_SCORES)
-                //.document(getCurrentUserEmail())
-                .document("malone@gmail.com")
+                .document(getCurrentUserEmail())
                 .collection(Constant.SCORES)
-                //.document(date);
-                .document("2022-02-11");
+                .document(date);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -133,6 +161,10 @@ public class FirebaseDBConnection{
         });
     }
 
+    /**
+     * Retrieves the current users details from the database
+     * @param activity
+     */
     public void getCurrentUserDetails(LoginActivity activity){
         firestore.collection(Constant.USER)
                 .document(getCurrentUserID())
@@ -154,17 +186,19 @@ public class FirebaseDBConnection{
                 });
     }
 
-
+    /**
+     * Uploads the activity results for the activities carried out to the database
+     * @param balanceScores - List of the balance scores achieved
+     * @param activity
+     */
     public void addBalanceScoreListToDB(List<BalanceData> balanceScores, BeginActivitiesActivity activity) {
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         Map<String,Object> map = new HashMap<String,Object>();
         map = ConvertObjectToMap(balanceScores);
         firestore.collection(Constant.PATIENT_SCORES)
-                //.document(getCurrentUserEmail())
-                .document("malone@gmail.com")
+                .document(getCurrentUserEmail())
                 .collection(Constant.SCORES)
-                //.document(date)
-                .document("2022-02-14")
+                .document(date)
                 .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -182,6 +216,11 @@ public class FirebaseDBConnection{
                 });
     }
 
+    /**
+     * Maps the Balance Data class object to a List of maps to be stored on the database
+     * @param balanceData -List of Balance Data objects
+     * @return - List of maps
+     */
     private  Map<String,Object> ConvertObjectToMap(List<BalanceData> balanceData) {
         Map<String,Object> list = new HashMap<String,Object>();
 
@@ -200,13 +239,14 @@ public class FirebaseDBConnection{
         return list;
     }
 
-
+    /**
+     * Retrieves the Users previous Balance activity results from the database
+     * @param activity
+     */
     public void getBalanceProgress(ProgressReportActivity activity){
-        //List<Map<String,Object>> allDocuments = new ArrayList<>();
         List<Map<String, Object>> allDocuments = new ArrayList<>();
         firestore.collection(Constant.PATIENT_SCORES)
-                //.document(getCurrentUserEmail())
-                .document("malone@gmail.com")
+                .document(getCurrentUserEmail())
                 .collection(Constant.SCORES)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -219,12 +259,14 @@ public class FirebaseDBConnection{
                                 allDocuments.add(data);
                             }
                             int size = allDocuments.size();
-                            List<Map<String,Object>> lastSeven = new ArrayList<>();
-                            for (int i = size-1; i >= size-7; i--){
-                                lastSeven.add(allDocuments.get(i));
+                            if(size > 7){
+                                List<Map<String,Object>> lastSeven = new ArrayList<>();
+                                for (int i = size-1; i >= size-7; i--){
+                                    lastSeven.add(allDocuments.get(i));
+                                }
+                                activity.progressRetrievedSuccess(lastSeven);
                             }
-
-                            activity.progressRetrievedSuccess(lastSeven);
+                            else activity.progressRetrievedSuccess(allDocuments);
                         } else {
                             activity.progressRetrievedFailed();
                             Log.d(TAG, "No data currently stored in database");

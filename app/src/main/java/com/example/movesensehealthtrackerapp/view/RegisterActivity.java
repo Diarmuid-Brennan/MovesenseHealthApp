@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 10/03/22
+ * Register Activity - Registers a user with the firestore database
+ */
 package com.example.movesensehealthtrackerapp.view;
 
 import androidx.annotation.NonNull;
@@ -91,6 +96,9 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
+    /**
+     * adds a button to the toolbar that returns the user to the previous activity
+     */
     private void setupBackFunction(){
         toolbar = (Toolbar) findViewById(R.id.toolbar_register_activity);
         setSupportActionBar(toolbar);
@@ -108,6 +116,9 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
+    /**
+     * registers a user with the firestore database
+     */
     private void registerUser() {
         if (validateRegisterDetails()) {
             showProgressDialog(getString(R.string.please_wait));
@@ -141,8 +152,19 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
+    /**
+     * On success registration display snackbar
+     */
+    public void registerSuccess(){
+        hideProgressDialog();
+        showErrorSnackBar(getString(R.string.registered_successfully), false);
+    }
 
-
+    /**
+     * Validates the user details entered to the registration form
+     * A snack bar is displayed showing if the user has entered invalid data
+     * @return - boolean showing where the entered details were valid
+     */
     private boolean validateRegisterDetails(){
         if(TextUtils.isEmpty(firstname.getText().toString().trim()) || firstname.getText().toString().trim().length() < 3){
             showErrorSnackBar(getString(R.string.err_msg_enter_first_name), true);

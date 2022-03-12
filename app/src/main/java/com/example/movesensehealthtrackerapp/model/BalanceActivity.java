@@ -1,3 +1,9 @@
+/**
+ * Diarmuid Brennan
+ * 13/03/22
+ * Balance Activity - Contains the data for each activity to be carried out
+ */
+
 package com.example.movesensehealthtrackerapp.model;
 
 import android.os.Parcel;
@@ -17,6 +23,12 @@ public class BalanceActivity implements Parcelable {
 
     }
 
+    /**
+     * Constructor- initializes calss
+     * @param name -name of activity
+     * @param description - description of activity
+     * @param time_limit - time limit of activity
+     */
     public BalanceActivity(String name, String description, int time_limit) {
         this.name = name;
         this.description = description;
@@ -24,12 +36,19 @@ public class BalanceActivity implements Parcelable {
         isCompleted = false;
     }
 
+    /**
+     * Creates a parcelable object of the class allowing it to be passed between activities
+     * @param in - input object
+     */
     protected BalanceActivity(Parcel in) {
         name = in.readString();
         description = in.readString();
         time_limit = in.readInt();
     }
 
+    /**
+     * Creates Balance Activity from parcelable object
+     */
     public static final Creator<BalanceActivity> CREATOR = new Creator<BalanceActivity>() {
         @Override
         public BalanceActivity createFromParcel(Parcel in) {
@@ -51,8 +70,10 @@ public class BalanceActivity implements Parcelable {
         return name;
     }
 
-
-
+    /**
+     * toString method
+     * @return name of Balance Activity
+     */
     public String toString() {
         return ( name );
     }

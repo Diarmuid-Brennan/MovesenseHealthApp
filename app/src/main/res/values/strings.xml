@@ -106,5 +106,6 @@
     <string name="unsuccessful_connection">If deice is not connected to within 30 seconds, please restart the application</string>
     <string name="logout">Logout</string>
     <string name="averageScores">Average Movements - last 7 activities</string>
+    <string name="registered_successfully">User was registerd successfully</string>
 
 </resources>

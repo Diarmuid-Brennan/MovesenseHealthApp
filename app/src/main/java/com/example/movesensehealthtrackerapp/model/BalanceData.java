@@ -1,3 +1,8 @@
+/**
+ * Diarmuid Brennan
+ * 13/03/22
+ * Balance Data - Contains the movement data gathered from a carried out activity
+ */
 package com.example.movesensehealthtrackerapp.model;
 
 import com.google.firebase.Timestamp;
@@ -13,7 +18,6 @@ public class BalanceData {
     private double Max_Value;
     private double Min_Value;
     private String Date_set;
-    //private com.google.firebase.Timestamp Date_set;
     private double Avg_Value;
     private List<Double> accData;
     private boolean completed;
@@ -23,8 +27,17 @@ public class BalanceData {
 
     }
 
+    /**
+     * Constructor
+     * @param max_value - Activity max movement value
+     * @param min_value - Activity min movement value
+     * @param avg_value - Activity average movement value
+     * @param date_set - Date activity set
+     * @param accData - List of movement data from activity
+     * @param completed - boolean if activity was successfully completed
+     * @param activityName - Activities name
+     */
     public BalanceData(double max_value, double min_value, double avg_value, String date_set, List<Double> accData, boolean completed, String activityName) {
-    //public BalanceData(double max_value, double min_value, double avg_Value, Timestamp date_set,  boolean completed, String activityName) {
         Max_Value = max_value;
         Min_Value = min_value;
         Date_set = date_set;
@@ -34,6 +47,15 @@ public class BalanceData {
         this.activityName = activityName;
     }
 
+    /**
+     * Constructor
+     * @param max_value - Activity max movement value
+     * @param min_value - Activity min movement value
+     * @param avg_value - Activity average movement value
+     * @param date_set - Date activity set
+     * @param completed - boolean if activity was successfully completed
+     * @param activityName - Activities name
+     */
     public BalanceData(double max_value, double min_value, double avg_value, String date_set,  boolean completed, String activityName) {
         Max_Value = max_value;
         Min_Value = min_value;
